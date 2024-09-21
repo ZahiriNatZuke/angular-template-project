@@ -1,4 +1,5 @@
 import {
+  APP_INITIALIZER,
   ApplicationConfig,
   importProvidersFrom,
   LOCALE_ID,
@@ -19,13 +20,27 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { environment } from '@core/environments';
 import { authInterceptor } from '@core/interceptors';
-import { LanguageService } from '@core/services';
+import { AuthService, LanguageService, ThemeService } from '@core/services';
 
 import localeEN from '@angular/common/locales/en';
 import localeES from '@angular/common/locales/es';
 
+registerLocaleData(localeEN);
+registerLocaleData(localeES);
+
 export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
+export function initializeApp(language: LanguageService, theme: ThemeService, auth: AuthService) {
+  return () => {
+    return new Promise<void>((resolve) => {
+      language.init();
+      theme.init();
+      auth.init();
+      resolve();
+    });
+  };
 }
 
 export const appConfig: ApplicationConfig = {
@@ -71,9 +86,12 @@ export const appConfig: ApplicationConfig = {
       provide: LOCALE_ID,
       deps: [ LanguageService ],
       useFactory: (languageService: LanguageService) => languageService.languageSignal(),
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [ LanguageService, ThemeService, AuthService ],
+      multi: true
     }
   ]
 };
-
-registerLocaleData(localeEN);
-registerLocaleData(localeES);

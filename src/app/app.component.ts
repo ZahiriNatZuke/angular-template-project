@@ -1,6 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AuthService, LanguageService, ThemeService } from '@core/services';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +10,4 @@ import { AuthService, LanguageService, ThemeService } from '@core/services';
 })
 export class AppComponent {
   title = signal('angular-template-project');
-
-  constructor() {
-    inject(AuthService).init();
-    inject(LanguageService).init();
-    inject(ThemeService).init();
-  }
-
 }
