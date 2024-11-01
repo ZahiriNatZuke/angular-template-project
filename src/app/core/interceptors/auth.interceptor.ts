@@ -1,33 +1,31 @@
 import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '@core/services';
-import { tap } from 'rxjs';
 import { ApiEndpoit } from '@core/types/enums';
+import { tap } from 'rxjs';
 
-const authDataUrl = [
-  ApiEndpoit.loginURL,
-  ApiEndpoit.refreshURL
-];
+const authDataUrl = [ApiEndpoit.loginURL, ApiEndpoit.refreshURL];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  if ( authService.isAuth ) {
-    req = req.clone({
-      setHeaders: { Authorization: `Bearer ${ authService.JWT }` }
-    });
-  }
+	const authService = inject(AuthService);
+	let newReq = req;
+	if (authService.isAuth) {
+		newReq = req.clone({
+			setHeaders: { Authorization: `Bearer ${authService.JWT}` },
+		});
+	}
 
-  return next(req).pipe(
-    tap((response) => {
-      if (
-        response instanceof HttpResponse &&
-        authDataUrl.some((url) => response.url?.includes(url))
-      ) {
-        const auth = ( response.body as any ).data;
-        authService.updateUser = auth.user;
-        authService.updateJWT = auth.accessToken;
-        authService.updateRefresh = auth.refreshToken;
-      }
-    })
-  );
+	return next(newReq).pipe(
+		tap(response => {
+			if (
+				response instanceof HttpResponse &&
+				authDataUrl.some(url => response.url?.includes(url))
+			) {
+				const auth = (response.body as any).data;
+				authService.updateUser = auth.user;
+				authService.updateJWT = auth.accessToken;
+				authService.updateRefresh = auth.refreshToken;
+			}
+		})
+	);
 };
