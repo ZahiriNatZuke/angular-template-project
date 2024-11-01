@@ -14,7 +14,7 @@ export class SeoService {
 	setTitle(title: string) {
 		const translation = this.#translateService.instant(title);
 		const titleCase = new TitleCasePipe().transform(String(translation));
-		this.#title.setTitle(`${environment.defaultTitle} | ${titleCase}`);
+		this.#title.setTitle(`${titleCase} | ${environment.defaultTitle}`);
 	}
 
 	addTag(tag: MetaDefinition) {

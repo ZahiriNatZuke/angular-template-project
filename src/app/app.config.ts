@@ -29,7 +29,11 @@ import { routes } from './app.routes';
 
 import localeEN from '@angular/common/locales/en';
 import localeES from '@angular/common/locales/es';
+import { CustomRouterStateSerializer, RouterEffects } from '@core/router-store';
 import { appInitializer } from '@core/utils';
+import { provideEffects } from '@ngrx/effects';
+import { provideRouterStore, routerReducer } from '@ngrx/router-store';
+import { provideStore } from '@ngrx/store';
 
 registerLocaleData(localeEN);
 registerLocaleData(localeES);
@@ -65,6 +69,9 @@ export const appConfig: ApplicationConfig = {
 				},
 			})
 		),
+		provideStore({ router: routerReducer }),
+		provideRouterStore({ serializer: CustomRouterStateSerializer }),
+		provideEffects(RouterEffects),
 		{
 			provide: DATE_PIPE_DEFAULT_OPTIONS,
 			useValue: {
