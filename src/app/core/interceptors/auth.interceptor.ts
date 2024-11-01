@@ -1,7 +1,7 @@
 import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '@core/services';
-import { ApiEndpoit } from '@core/types/enums';
+import { ApiEndpoit } from '@core/types';
 import { tap } from 'rxjs';
 
 const authDataUrl = [ApiEndpoit.loginURL, ApiEndpoit.refreshURL];

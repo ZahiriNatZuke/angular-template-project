@@ -1,4 +1,4 @@
-import { Languages } from '@core/types/enums';
+import { Languages } from '@core/types';
 
 export const environment = {
 	production: false,
@@ -11,4 +11,5 @@ export const environment = {
 	authRememberMeKey: 'X-Dev-Auth-Remember-Me',
 	languageKey: 'X-Dev-Language',
 	themeKey: 'X-Dev-Theme-UI',
+	timeZone: 'America\\Havana',
 };

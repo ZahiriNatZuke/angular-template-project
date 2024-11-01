@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '@core/environments';
-import { ApiEndpoit } from '@core/types/enums';
+import { ApiEndpoit } from '@core/types';
 import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })

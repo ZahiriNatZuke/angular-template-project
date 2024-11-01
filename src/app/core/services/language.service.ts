@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, RendererFactory2, inject, signal } from '@angular/core';
 import { environment } from '@core/environments';
-import { Languages } from '@core/types/enums';
+import { Languages } from '@core/types';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })

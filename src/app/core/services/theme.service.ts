@@ -9,7 +9,7 @@ import {
 	signal,
 } from '@angular/core';
 import { environment } from '@core/environments';
-import { Themes } from '@core/types/enums';
+import { Themes } from '@core/types';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {

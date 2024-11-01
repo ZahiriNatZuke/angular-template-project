@@ -2,7 +2,7 @@ import { TitleCasePipe } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
 import { environment } from '@core/environments';
-import { Seo } from '@core/types/interfaces';
+import { Seo } from '@core/types';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
