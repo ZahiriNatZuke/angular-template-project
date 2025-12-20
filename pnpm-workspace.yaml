@@ -1,4 +1,6 @@
-ignoredBuiltDependencies:
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - unrs-resolver
   - '@biomejs/biome'
   - esbuild
   - lmdb

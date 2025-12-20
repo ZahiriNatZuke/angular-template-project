@@ -1,12 +1,1 @@
-/* You can add global styles to this file, and also import other style files */
-@import "tailwindcss" layer(theme);
 
-@theme {
-	/* Custom theme configuration */
-	--font-display: system-ui, serif;
-}
-
-@plugin "@tailwindcss/typography";
-@plugin "@tailwindcss/forms";
-@plugin "@tailwindcss/container-queries";
-@plugin "daisyui";
