@@ -1,9 +1,9 @@
 import {
-	APP_INITIALIZER,
 	ApplicationConfig,
 	LOCALE_ID,
 	importProvidersFrom,
-	provideExperimentalZonelessChangeDetection,
+	provideZonelessChangeDetection,
+	inject,
 } from '@angular/core';
 import {
 	provideRouter,
@@ -22,7 +22,7 @@ import {
 } from '@angular/common/http';
 import { environment } from '@core/environments';
 import { authInterceptor } from '@core/interceptors';
-import { AuthService, LanguageService, ThemeService } from '@core/services';
+import { LanguageStore } from '@core/stores';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
@@ -30,7 +30,6 @@ import { routes } from './app.routes';
 import localeEN from '@angular/common/locales/en';
 import localeES from '@angular/common/locales/es';
 import { CustomRouterStateSerializer, RouterEffects } from '@core/router-store';
-import { appInitializer } from '@core/utils';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore, routerReducer } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
@@ -44,7 +43,7 @@ export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
 
 export const appConfig: ApplicationConfig = {
 	providers: [
-		provideExperimentalZonelessChangeDetection(),
+		provideZonelessChangeDetection(),
 		provideRouter(
 			routes,
 			withComponentInputBinding(),
@@ -81,15 +80,10 @@ export const appConfig: ApplicationConfig = {
 		},
 		{
 			provide: LOCALE_ID,
-			deps: [LanguageService],
-			useFactory: (languageService: LanguageService) =>
-				languageService.languageSignal(),
-		},
-		{
-			provide: APP_INITIALIZER,
-			useFactory: appInitializer,
-			deps: [LanguageService, ThemeService, AuthService],
-			multi: true,
+			useFactory: () => {
+				const languageStore = inject(LanguageStore);
+				return languageStore.current();
+			},
 		},
 	],
 };

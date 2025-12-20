@@ -2,32 +2,37 @@
 {
 	"compileOnSave": false,
 	"compilerOptions": {
-		"baseUrl": "./",
-		"outDir": "./dist/out-tsc",
-		"strict": true,
-		"noImplicitOverride": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"sourceMap": true,
-		"declaration": false,
-		"experimentalDecorators": true,
-		"moduleResolution": "node",
-		"importHelpers": true,
-		"target": "ES2022",
-		"module": "ES2022",
-		"useDefineForClassFields": false,
-		"lib": ["ES2022", "dom"],
-		"paths": {
-			"@app/*": ["src/app/*"],
-			"@core/*": ["src/app/core/*"],
-			"@core/environments": ["src/environments/index"]
-		},
-		"allowSyntheticDefaultImports": true,
-		"isolatedModules": true
-	},
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "paths": {
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@core/environments": [
+        "src/environments/index"
+      ]
+    },
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true
+  },
 	"angularCompilerOptions": {
 		"enableI18nLegacyMessageIdFormat": false,
 		"strictInjectionParameters": true,

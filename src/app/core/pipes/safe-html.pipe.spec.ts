@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { SafeHtmlPipe } from './safe-html.pipe';
 
 describe('SafeHtmlPipe', () => {

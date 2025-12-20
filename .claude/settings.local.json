@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(git checkout:*)",
+      "Bash(git tag:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx @angular/cli@19 update:*)",
+      "Bash(npx @angular/cli@20 update:*)",
+      "Bash(npx @angular/cli@21 update:*)",
+      "Bash(pnpm update:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

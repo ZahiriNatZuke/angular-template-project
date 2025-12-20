@@ -1,12 +1,13 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
-	Injectable,
-	PLATFORM_ID,
-	RendererFactory2,
-	computed,
-	inject,
-	signal,
+  Injectable,
+  PLATFORM_ID,
+  RendererFactory2,
+  computed,
+  inject,
+  signal,
+  DOCUMENT
 } from '@angular/core';
 import { environment } from '@core/environments';
 import { Themes } from '@core/types';
