@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { PLATFORM_ID, computed, inject } from '@angular/core';
+import { computed, inject, PLATFORM_ID } from '@angular/core';
 import { environment } from '@core/environments';
 import { Languages } from '@core/types';
 import {

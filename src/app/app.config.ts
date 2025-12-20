@@ -1,8 +1,15 @@
+import { DATE_PIPE_DEFAULT_OPTIONS, registerLocaleData } from '@angular/common';
+import {
+	provideHttpClient,
+	withFetch,
+	withInterceptors,
+} from '@angular/common/http';
+import localeEN from '@angular/common/locales/en';
+import localeES from '@angular/common/locales/es';
 import {
 	ApplicationConfig,
-	LOCALE_ID,
-	importProvidersFrom,
 	inject,
+	LOCALE_ID,
 	provideZonelessChangeDetection,
 } from '@angular/core';
 import {
@@ -12,26 +19,16 @@ import {
 	withRouterConfig,
 	withViewTransitions,
 } from '@angular/router';
-
-import { DATE_PIPE_DEFAULT_OPTIONS, registerLocaleData } from '@angular/common';
-import {
-	provideHttpClient,
-	withFetch,
-	withInterceptors,
-} from '@angular/common/http';
 import { environment } from '@core/environments';
 import { authInterceptor } from '@core/interceptors';
-import { LanguageStore } from '@core/stores';
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import { routes } from './app.routes';
-
-import localeEN from '@angular/common/locales/en';
-import localeES from '@angular/common/locales/es';
 import { CustomRouterStateSerializer, RouterEffects } from '@core/router-store';
+import { LanguageStore } from '@core/stores';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore, routerReducer } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { routes } from './app.routes';
 
 registerLocaleData(localeEN);
 registerLocaleData(localeES);

@@ -1,8 +1,8 @@
 import { RouterStateSnapshot } from '@angular/router';
 import {
-	RouterState,
 	mergeRouteData,
 	mergeRouteParams,
+	RouterState,
 } from '@app/core/router-store';
 import { RouterStateSerializer } from '@ngrx/router-store';
 

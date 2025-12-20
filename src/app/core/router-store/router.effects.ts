@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { Data } from '@angular/router';
 import { selectData } from '@app/core/router-store';
 import { SeoService } from '@app/core/services';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -19,8 +18,7 @@ export class RouterEffects {
 			this.#actions.pipe(
 				ofType(routerNavigatedAction),
 				concatLatestFrom(() => this.#store.select(selectData)),
-				// biome-ignore lint/style/noNonNullAssertion: Router data guaranteed to have title from route config
-				map(([, data]: [unknown, Data]) => data['title'] as string),
+				map(([, data]: [unknown, Record<string, string>]) => data['title']),
 				tap(title => this.#seo.setTitle(title))
 			),
 		{ dispatch: false }
@@ -31,8 +29,9 @@ export class RouterEffects {
 			this.#actions.pipe(
 				ofType(routerNavigatedAction),
 				concatLatestFrom(() => this.#store.select(selectData)),
-				// biome-ignore lint/style/noNonNullAssertion: Router data guaranteed to have description from route config
-				map(([, data]: [unknown, Data]) => data['description'] as string),
+				map(
+					([, data]: [unknown, Record<string, string>]) => data['description']
+				),
 				tap(description =>
 					this.#seo.updateTag({ name: 'description', content: description })
 				)

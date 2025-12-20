@@ -1,9 +1,9 @@
 import { Data, Params } from '@angular/router';
 
-export * from './router.utils';
-export * from './router.selectors';
-export * from './router-state-serializer';
 export * from './router.effects';
+export * from './router.selectors';
+export * from './router.utils';
+export * from './router-state-serializer';
 
 export interface RouterState {
 	url: string;

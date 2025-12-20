@@ -58,9 +58,7 @@ export const AuthStore = signalStore(
 			pipe(
 				switchMap(() =>
 					http
-						.get<{ csrfToken: string }>(`${environment.apiUrl}/auth/csrf`, {
-							withCredentials: true,
-						})
+						.get<{ csrfToken: string }>(`${environment.apiUrl}/auth/csrf`)
 						.pipe(
 							tapResponse({
 								next: ({ csrfToken }) => patchState(store, { csrfToken }),
@@ -84,16 +82,11 @@ export const AuthStore = signalStore(
 				tap(() => patchState(store, { isLoading: true, error: null })),
 				switchMap(({ email, password, rememberMe }) =>
 					http
-						.post<{ user: User }>(
-							`${environment.apiUrl}/auth/login`,
-							{ email, password, rememberMe },
-							{
-								withCredentials: true,
-								headers: {
-									'X-CSRF-Token': store.csrfToken() || '',
-								},
-							}
-						)
+						.post<{ user: User }>(`${environment.apiUrl}/auth/login`, {
+							email,
+							password,
+							rememberMe,
+						})
 						.pipe(
 							tapResponse({
 								next: ({ user }) => {
@@ -121,30 +114,19 @@ export const AuthStore = signalStore(
 		logout: rxMethod<void>(
 			pipe(
 				switchMap(() =>
-					http
-						.post(
-							`${environment.apiUrl}/auth/logout`,
-							{},
-							{
-								withCredentials: true,
-								headers: {
-									'X-CSRF-Token': store.csrfToken() || '',
-								},
-							}
-						)
-						.pipe(
-							tapResponse({
-								next: () => {
-									patchState(store, initialState);
-									router.navigate(['/auth/login']);
-								},
-								error: () => {
-									// Even on error, clear local state
-									patchState(store, initialState);
-									router.navigate(['/auth/login']);
-								},
-							})
-						)
+					http.post(`${environment.apiUrl}/auth/logout`, {}).pipe(
+						tapResponse({
+							next: () => {
+								patchState(store, initialState);
+								router.navigate(['/auth/login']);
+							},
+							error: () => {
+								// Even on error, clear local state
+								patchState(store, initialState);
+								router.navigate(['/auth/login']);
+							},
+						})
+					)
 				)
 			)
 		),
@@ -154,27 +136,23 @@ export const AuthStore = signalStore(
 			pipe(
 				tap(() => patchState(store, { isLoading: true })),
 				switchMap(() =>
-					http
-						.get<{ user: User }>(`${environment.apiUrl}/auth/me`, {
-							withCredentials: true,
+					http.get<{ user: User }>(`${environment.apiUrl}/auth/me`).pipe(
+						tapResponse({
+							next: ({ user }) => {
+								patchState(store, {
+									user,
+									isAuthenticated: true,
+									isLoading: false,
+								});
+							},
+							error: () => {
+								patchState(store, {
+									...initialState,
+									isLoading: false,
+								});
+							},
 						})
-						.pipe(
-							tapResponse({
-								next: ({ user }) => {
-									patchState(store, {
-										user,
-										isAuthenticated: true,
-										isLoading: false,
-									});
-								},
-								error: () => {
-									patchState(store, {
-										...initialState,
-										isLoading: false,
-									});
-								},
-							})
-						)
+					)
 				)
 			)
 		),
@@ -183,19 +161,15 @@ export const AuthStore = signalStore(
 		refreshUser: rxMethod<void>(
 			pipe(
 				switchMap(() =>
-					http
-						.get<{ user: User }>(`${environment.apiUrl}/auth/me`, {
-							withCredentials: true,
+					http.get<{ user: User }>(`${environment.apiUrl}/auth/me`).pipe(
+						tapResponse({
+							next: ({ user }) => patchState(store, { user }),
+							error: (error: HttpErrorResponse) =>
+								patchState(store, {
+									error: error.message || 'Failed to refresh user data',
+								}),
 						})
-						.pipe(
-							tapResponse({
-								next: ({ user }) => patchState(store, { user }),
-								error: (error: HttpErrorResponse) =>
-									patchState(store, {
-										error: error.message || 'Failed to refresh user data',
-									}),
-							})
-						)
+					)
 				)
 			)
 		),
