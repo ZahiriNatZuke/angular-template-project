@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '@core/environments';
@@ -20,7 +20,7 @@ export interface User {
 	name: string;
 	email: string;
 	role: string;
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
 // State Interface
@@ -64,7 +64,7 @@ export const AuthStore = signalStore(
 						.pipe(
 							tapResponse({
 								next: ({ csrfToken }) => patchState(store, { csrfToken }),
-								error: (error: any) =>
+								error: (error: HttpErrorResponse) =>
 									patchState(store, {
 										error: error.message || 'Failed to fetch CSRF token',
 									}),
@@ -105,7 +105,7 @@ export const AuthStore = signalStore(
 									});
 									router.navigate(['/dashboard']);
 								},
-								error: (error: any) => {
+								error: (error: HttpErrorResponse) => {
 									patchState(store, {
 										isLoading: false,
 										error: error.message || 'Login failed',
@@ -190,7 +190,7 @@ export const AuthStore = signalStore(
 						.pipe(
 							tapResponse({
 								next: ({ user }) => patchState(store, { user }),
-								error: (error: any) =>
+								error: (error: HttpErrorResponse) =>
 									patchState(store, {
 										error: error.message || 'Failed to refresh user data',
 									}),
