@@ -1,4 +1,7 @@
-import { computed, inject, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID, computed, inject } from '@angular/core';
+import { environment } from '@core/environments';
+import { Languages } from '@core/types';
 import {
 	patchState,
 	signalStore,
@@ -7,10 +10,7 @@ import {
 	withMethods,
 	withState,
 } from '@ngrx/signals';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { Languages } from '@core/types';
-import { environment } from '@core/environments';
 
 interface LanguageState {
 	current: Languages;

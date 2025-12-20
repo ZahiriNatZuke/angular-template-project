@@ -1,4 +1,8 @@
-import { computed, inject, PLATFORM_ID } from '@angular/core';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID, computed, inject } from '@angular/core';
+import { environment } from '@core/environments';
+import { Themes } from '@core/types';
 import {
 	patchState,
 	signalStore,
@@ -7,10 +11,6 @@ import {
 	withMethods,
 	withState,
 } from '@ngrx/signals';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { MediaMatcher } from '@angular/cdk/layout';
-import { Themes } from '@core/types';
-import { environment } from '@core/environments';
 
 interface ThemeState {
 	current: Themes;

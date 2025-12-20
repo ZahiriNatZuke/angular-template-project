@@ -2,8 +2,8 @@ import {
 	ApplicationConfig,
 	LOCALE_ID,
 	importProvidersFrom,
-	provideZonelessChangeDetection,
 	inject,
+	provideZonelessChangeDetection,
 } from '@angular/core';
 import {
 	provideRouter,
@@ -15,7 +15,6 @@ import {
 
 import { DATE_PIPE_DEFAULT_OPTIONS, registerLocaleData } from '@angular/common';
 import {
-	HttpClient,
 	provideHttpClient,
 	withFetch,
 	withInterceptors,
@@ -23,8 +22,8 @@ import {
 import { environment } from '@core/environments';
 import { authInterceptor } from '@core/interceptors';
 import { LanguageStore } from '@core/stores';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 
 import localeEN from '@angular/common/locales/en';
@@ -36,10 +35,6 @@ import { provideStore } from '@ngrx/store';
 
 registerLocaleData(localeEN);
 registerLocaleData(localeES);
-
-export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
-	return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -58,16 +53,13 @@ export const appConfig: ApplicationConfig = {
 			withViewTransitions()
 		),
 		provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
-		importProvidersFrom(
-			TranslateModule.forRoot({
-				defaultLanguage: environment.defaultLanguage,
-				loader: {
-					provide: TranslateLoader,
-					useFactory: createTranslateLoader,
-					deps: [HttpClient],
-				},
-			})
-		),
+		provideTranslateService({
+			defaultLanguage: environment.defaultLanguage,
+		}),
+		provideTranslateHttpLoader({
+			prefix: './assets/i18n/',
+			suffix: '.json',
+		}),
 		provideStore({ router: routerReducer }),
 		provideRouterStore({ serializer: CustomRouterStateSerializer }),
 		provideEffects(RouterEffects),

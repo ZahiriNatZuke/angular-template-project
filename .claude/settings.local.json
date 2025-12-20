@@ -12,7 +12,8 @@
       "Bash(pnpm update:*)",
       "Bash(pnpm add:*)",
       "Bash(pnpm remove:*)",
-      "Bash(pnpm run build:*)"
+      "Bash(pnpm run build:*)",
+      "Bash(xargs cat:*)"
     ],
     "deny": [],
     "ask": []
