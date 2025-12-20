@@ -3,6 +3,7 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { computed, inject, PLATFORM_ID } from '@angular/core';
 import { environment } from '@core/environments';
 import { Themes } from '@core/types';
+import { CookieUtils } from '@core/utils';
 import {
 	patchState,
 	signalStore,
@@ -16,8 +17,6 @@ interface ThemeState {
 	current: Themes;
 	prefersDark: boolean;
 }
-
-const THEME_STORAGE_KEY = environment.themeKey;
 
 export const ThemeStore = signalStore(
 	{ providedIn: 'root' },
@@ -51,8 +50,12 @@ export const ThemeStore = signalStore(
 				body.classList.remove(Themes.Light, Themes.Dark);
 				body.classList.add(theme);
 
-				// Persist to localStorage
-				localStorage.setItem(THEME_STORAGE_KEY, theme);
+				// Save to cookie (expires in 1 year, accessible by JavaScript)
+				CookieUtils.set(environment.themeKey, theme, {
+					expires: 365,
+					path: '/',
+					sameSite: 'Lax',
+				});
 
 				// Update state
 				patchState(store, { current: theme });
@@ -67,8 +70,8 @@ export const ThemeStore = signalStore(
 			initTheme() {
 				if (!isPlatformBrowser(platformId)) return;
 
-				// Check localStorage first
-				const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Themes;
+				// Check cookie first
+				const savedTheme = CookieUtils.get(environment.themeKey) as Themes;
 				if (savedTheme) {
 					this.setTheme(savedTheme);
 					return;

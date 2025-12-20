@@ -2,6 +2,7 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { computed, inject, PLATFORM_ID } from '@angular/core';
 import { environment } from '@core/environments';
 import { Languages } from '@core/types';
+import { CookieUtils } from '@core/utils';
 import {
 	patchState,
 	signalStore,
@@ -16,8 +17,6 @@ interface LanguageState {
 	current: Languages;
 	available: Languages[];
 }
-
-const LANGUAGE_STORAGE_KEY = environment.languageKey;
 
 export const LanguageStore = signalStore(
 	{ providedIn: 'root' },
@@ -43,8 +42,12 @@ export const LanguageStore = signalStore(
 
 				const htmlElement = document.querySelector('html');
 
-				// Update localStorage
-				localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+				// Save to cookie (expires in 1 year, accessible by JavaScript)
+				CookieUtils.set(environment.languageKey, lang, {
+					expires: 365,
+					path: '/',
+					sameSite: 'Lax',
+				});
 
 				// Update translate service
 				translate.use(lang);
@@ -69,10 +72,8 @@ export const LanguageStore = signalStore(
 			initLanguage() {
 				if (!isPlatformBrowser(platformId)) return;
 
-				// Load from localStorage on init
-				const savedLang = localStorage.getItem(
-					LANGUAGE_STORAGE_KEY
-				) as Languages;
+				// Load from cookie on init
+				const savedLang = CookieUtils.get(environment.languageKey) as Languages;
 				if (savedLang && store.available().includes(savedLang)) {
 					this.setLanguage(savedLang);
 				} else {

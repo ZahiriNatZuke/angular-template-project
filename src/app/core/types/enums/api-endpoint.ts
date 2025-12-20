@@ -1,4 +1,4 @@
-export enum ApiEndpoit {
+export enum ApiEndpoint {
 	loginURL = '/auth/login',
 	logoutURL = '/auth/logout',
 	meURL = '/auth/me',
