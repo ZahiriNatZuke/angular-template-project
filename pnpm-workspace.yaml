@@ -1,0 +1,5 @@
+ignoredBuiltDependencies:
+  - '@biomejs/biome'
+  - esbuild
+  - lmdb
+  - msgpackr-extract
