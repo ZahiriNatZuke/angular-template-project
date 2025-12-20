@@ -10,6 +10,7 @@ import {
 	ApplicationConfig,
 	inject,
 	LOCALE_ID,
+	provideAppInitializer,
 	provideZonelessChangeDetection,
 } from '@angular/core';
 import {
@@ -21,11 +22,8 @@ import {
 } from '@angular/router';
 import { environment } from '@core/environments';
 import { authInterceptor } from '@core/interceptors';
-import { CustomRouterStateSerializer, RouterEffects } from '@core/router-store';
 import { LanguageStore } from '@core/stores';
-import { provideEffects } from '@ngrx/effects';
-import { provideRouterStore, routerReducer } from '@ngrx/router-store';
-import { provideStore } from '@ngrx/store';
+import { initRouterSeoUpdates } from '@core/utils/router-seo.init';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
@@ -51,15 +49,15 @@ export const appConfig: ApplicationConfig = {
 		),
 		provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
 		provideTranslateService({
-			defaultLanguage: environment.defaultLanguage,
+			fallbackLang: environment.defaultLanguage,
 		}),
 		provideTranslateHttpLoader({
 			prefix: './assets/i18n/',
 			suffix: '.json',
 		}),
-		provideStore({ router: routerReducer }),
-		provideRouterStore({ serializer: CustomRouterStateSerializer }),
-		provideEffects(RouterEffects),
+		provideAppInitializer(() => {
+			initRouterSeoUpdates();
+		}),
 		{
 			provide: DATE_PIPE_DEFAULT_OPTIONS,
 			useValue: {

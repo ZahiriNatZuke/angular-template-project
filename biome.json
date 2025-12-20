@@ -90,7 +90,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["src/app/core/router-store/router.effects.ts"],
+			"includes": ["src/app/core/utils/router-seo.init.ts"],
 			"linter": {
 				"rules": {
 					"complexity": {
