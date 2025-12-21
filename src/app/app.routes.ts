@@ -6,8 +6,8 @@ export const routes: Routes = [
 		path: '',
 		component: AppComponent,
 		data: {
-			title: 'Home',
-			description: 'Home page',
+			title: 'routes.home.title',
+			description: 'routes.home.description',
 		},
 	},
 ];

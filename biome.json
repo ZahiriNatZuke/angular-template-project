@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,7 +7,13 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["./dist", "./node_modules", "package.json", "pnpm-lock.yaml"]
+		"includes": [
+			"**",
+			"!dist",
+			"!node_modules",
+			"!**/package.json",
+			"!**/pnpm-lock.yaml"
+		]
 	},
 	"formatter": {
 		"enabled": true,
@@ -16,8 +22,12 @@
 		"bracketSpacing": true,
 		"lineEnding": "lf"
 	},
-	"organizeImports": {
-		"enabled": true
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
 	},
 	"linter": {
 		"enabled": true,
@@ -72,5 +82,22 @@
 			"indentWidth": 2,
 			"quoteStyle": "single"
 		}
-	}
+	},
+	"html": {
+		"parser": {
+			"interpolation": true
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["src/app/core/utils/router-seo.init.ts"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"useLiteralKeys": "off"
+					}
+				}
+			}
+		}
+	]
 }

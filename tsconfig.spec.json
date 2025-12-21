@@ -5,7 +5,7 @@
 		"outDir": "./out-tsc/spec",
 		"module": "CommonJs",
 		"typeRoots": ["node_modules/@types"],
-		"types": ["jest", "node"]
+		"types": ["node"]
 	},
 	"include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
 }

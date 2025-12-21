@@ -1,11 +1,9 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '@core/services';
+import { CanActivateFn } from '@angular/router';
+import { AuthStore } from '@core/stores/auth.store';
 
-export const anonymousGuard: CanActivateFn = (route, state) => {
-	if (inject(AuthService).isAnonymous) {
-		return true;
-	}
-	inject(Router).navigate(['/home']);
-	return false;
+export const anonymousGuard: CanActivateFn = (_route, _state) => {
+	const authStore = inject(AuthStore);
+
+	return authStore.isAnonymous();
 };

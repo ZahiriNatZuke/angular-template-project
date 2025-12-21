@@ -1,1 +1,102 @@
-{}
+{
+	"routes": {
+		"home": {
+			"title": "Plantilla Angular 21 - Moderna y Segura",
+			"description": "Plantilla Angular 21 lista para producción con detección de cambios sin zonas, NgRx SignalStore, autenticación ultra-segura, TailwindCSS v4 y mejores prácticas."
+		}
+	},
+	"home": {
+		"hero": {
+			"title": "Plantilla Angular 21",
+			"subtitle": "Moderna y Lista para Producción",
+			"description": "Una plantilla Angular 21 completa con características de nivel empresarial, autenticación con seguridad prioritaria y optimizaciones de rendimiento integradas.",
+			"cta": {
+				"clone": "Clonar Repositorio",
+				"docs": "Ver Documentación"
+			}
+		},
+		"features": {
+			"title": "Qué Incluye",
+			"angular": {
+				"title": "Angular 21",
+				"description": "Componentes standalone con detección de cambios sin zonas para rendimiento óptimo"
+			},
+			"auth": {
+				"title": "Autenticación Ultra-Segura",
+				"description": "Cookies HttpOnly con protección CSRF, inmune a ataques XSS"
+			},
+			"state": {
+				"title": "SignalStore",
+				"description": "NgRx SignalStore para gestión de estado reactiva y tipada"
+			},
+			"styling": {
+				"title": "TailwindCSS v4",
+				"description": "Estilos modernos con biblioteca de componentes DaisyUI"
+			},
+			"i18n": {
+				"title": "Internacionalización",
+				"description": "i18n integrado con ngx-translate y cambio de idioma reactivo"
+			},
+			"testing": {
+				"title": "Vitest",
+				"description": "Pruebas unitarias rápidas con herramientas modernas"
+			}
+		},
+		"techStack": {
+			"title": "Stack Tecnológico",
+			"frontend": "Frontend",
+			"state": "Gestión de Estado",
+			"styling": "Estilos",
+			"testing": "Pruebas",
+			"tooling": "Herramientas"
+		},
+		"practices": {
+			"title": "Mejores Prácticas",
+			"security": {
+				"title": "Seguridad Primero",
+				"items": [
+					"Cookies HttpOnly para autenticación",
+					"Protección CSRF en mutaciones",
+					"Sin datos sensibles en localStorage",
+					"Pipes seguros contra XSS",
+					"Validación automática de sesión"
+				]
+			},
+			"performance": {
+				"title": "Rendimiento",
+				"items": [
+					"Detección de cambios sin zonas",
+					"Reactividad basada en signals",
+					"Sin barrel files (mejor tree-shaking)",
+					"Preparado para lazy loading",
+					"Optimización con Fetch API"
+				]
+			},
+			"architecture": {
+				"title": "Arquitectura",
+				"items": [
+					"Estructura feature-first",
+					"Componentes standalone",
+					"Patrones SignalStore",
+					"Programación reactiva",
+					"Clara separación de responsabilidades"
+				]
+			},
+			"dx": {
+				"title": "Experiencia del Desarrollador",
+				"items": [
+					"Pruebas rápidas con Vitest",
+					"Biome para linting/formateo",
+					"Hooks pre-commit",
+					"Alias de rutas",
+					"Enrutamiento tipado"
+				]
+			}
+		},
+		"footer": {
+			"madeBy": "Creado por",
+			"license": "Licencia MIT",
+			"version": "Versión"
+		}
+	}
+}

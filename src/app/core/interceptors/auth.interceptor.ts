@@ -1,31 +1,41 @@
-import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '@core/services';
-import { ApiEndpoit } from '@core/types';
-import { tap } from 'rxjs';
-
-const authDataUrl = [ApiEndpoit.loginURL, ApiEndpoit.refreshURL];
+import { AuthStore } from '@core/stores/auth.store';
+import { catchError, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-	const authService = inject(AuthService);
-	let newReq = req;
-	if (authService.isAuth) {
-		newReq = req.clone({
-			setHeaders: { Authorization: `Bearer ${authService.JWT}` },
-		});
+	const authStore = inject(AuthStore);
+
+	// Clone request con credentials (necesario para cookies HttpOnly)
+	let newReq = req.clone({
+		withCredentials: true,
+	});
+
+	// Agregar CSRF token a requests que lo necesitan (POST, PUT, DELETE, PATCH)
+	if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+		const csrfToken = authStore.csrfToken();
+		if (csrfToken) {
+			newReq = newReq.clone({
+				setHeaders: {
+					'X-CSRF-Token': csrfToken,
+				},
+			});
+		}
 	}
 
 	return next(newReq).pipe(
-		tap(response => {
-			if (
-				response instanceof HttpResponse &&
-				authDataUrl.some(url => response.url?.includes(url))
-			) {
-				const auth = (response.body as any).data;
-				authService.updateUser = auth.user;
-				authService.updateJWT = auth.accessToken;
-				authService.updateRefresh = auth.refreshToken;
+		catchError((error: HttpErrorResponse) => {
+			// Si recibimos 401, la sesión expiró
+			if (error.status === 401) {
+				authStore.logout();
 			}
+
+			// Si recibimos 403 con CSRF inválido, refetch token
+			if (error.status === 403 && error.error?.code === 'CSRF_INVALID') {
+				authStore.fetchCsrfToken();
+			}
+
+			return throwError(() => error);
 		})
 	);
 };
