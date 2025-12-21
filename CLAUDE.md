@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Angular 21 standalone template project using **zoneless change detection** (default), **NgRx SignalStore** for state management, **TailwindCSS v4** with DaisyUI, internationalization (i18n), and theming capabilities with **ultra-secure authentication** via HttpOnly cookies.
+Angular 21 standalone template project using **zoneless change detection** (default), **NgRx SignalStore** for state management, **TailwindCSS v4** with DaisyUI, internationalization (i18n), theming capabilities, and **ultra-secure authentication** via HttpOnly cookies.
+
+This is a **production-ready template** designed for building scalable Angular applications with modern best practices, security-first authentication, and optimal performance.
 
 ## Commands
 
@@ -29,32 +31,78 @@ Angular 21 standalone template project using **zoneless change detection** (defa
 
 ## Architecture
 
+### Project Structure
+
+The application follows a **feature-first architecture** with a central `core` module for shared functionality:
+
+```
+src/app/
+├── core/                    # Global shared functionality
+│   ├── guards/              # Route guards
+│   ├── interceptors/        # HTTP interceptors
+│   ├── pipes/               # Shared pipes
+│   ├── services/            # Utility services (NOT for state)
+│   ├── stores/              # NgRx SignalStores (global state)
+│   ├── types/               # TypeScript types and enums
+│   └── utils/               # Utility functions
+└── features/                # Feature modules (domain-specific)
+    └── [feature-name]/      # Each feature is self-contained
+```
+
 ### Core Module Structure
 
-The application uses a feature-based architecture with a central `core` module:
-
 **`src/app/core/`**
-- `components/` - Shared core components
 - `guards/` - Route guards (`auth.guard.ts`, `anonymous.guard.ts`)
 - `interceptors/` - HTTP interceptors (`auth.interceptor.ts` with CSRF support)
 - `pipes/` - Shared pipes (`safe-html.pipe.ts`, `safe-url.pipe.ts`)
-- `router-store/` - NgRx router integration
-  - `router-state-serializer.ts` - Custom router state serialization
-  - `router.effects.ts` - Router effects
-  - `router.selectors.ts` - Router selectors
-  - `router.utils.ts` - Router utilities
-- `stores/` - **NgRx SignalStores** (NEW)
+- `services/` - Utility services (NOT for state management)
+  - `seo.service.ts` - SEO meta tags management with i18n support
+  - `router-state.service.ts` - Router state management with signals
+  - `notify.service.ts` - Notifications (using Notiflix)
+- `stores/` - **NgRx SignalStores** for global state
   - `auth.store.ts` - Authentication with HttpOnly cookies + CSRF
   - `language.store.ts` - i18n management with signals
   - `theme.store.ts` - Theme switching (light/dark) with signals
-- `services/` - Utility services (not for state management)
-  - `seo.service.ts` - SEO meta tags management
-  - `notify.service.ts` - Notifications (using Notiflix)
 - `types/` - TypeScript types and enums
-  - `enums/` - API endpoints, fetch statuses, languages, themes
-  - `interfaces/` - Shared interfaces
+  - `enums/` - Languages, Themes
+  - `interfaces/` - Shared interfaces (Seo)
+- `utils/` - Utility functions
+  - `cookie.utils.ts` - Cookie management utilities
+  - `router-seo.init.ts` - Router SEO initialization with translation support
 
-**`src/app/views/`** - Feature modules/views
+### Feature Module Structure
+
+Each feature should be organized as a **self-contained module** with structure similar to `core/`:
+
+```
+features/[feature-name]/
+├── components/          # Feature-specific components
+├── pages/               # Feature pages/views (*.page.ts)
+├── services/            # Feature-specific services
+├── stores/              # Feature-specific stores (if needed)
+├── types/               # Feature-specific types
+│   ├── models/          # Data models
+│   └── enums/           # Feature enums
+├── guards/              # Feature-specific guards
+├── utils/               # Feature-specific utilities
+└── [feature-name].routes.ts  # Feature routes
+```
+
+**Feature Guidelines**:
+1. **Self-contained**: Each feature should be independent
+2. **No barrel files**: Use direct imports for better tree-shaking
+3. **Lazy-loaded**: Features should be lazy-loaded via routes
+4. **Minimal dependencies**: Avoid cross-feature dependencies (use `core/` instead)
+5. **Naming conventions**: Use `*.page.ts` for routable components
+
+**Example lazy-loaded feature**:
+```typescript
+// app.routes.ts
+{
+  path: 'products',
+  loadChildren: () => import('./features/products/products.routes')
+}
+```
 
 ### State Management (NgRx SignalStore)
 
@@ -65,7 +113,7 @@ The application uses a feature-based architecture with a central `core` module:
 Ultra-secure authentication using **HttpOnly + Secure + SameSite cookies**:
 
 ```typescript
-import { AuthStore } from '@core/stores';
+import { AuthStore } from '@core/stores/auth.store';
 
 // Inject store
 const authStore = inject(AuthStore);
@@ -94,7 +142,7 @@ authStore.checkAuth();
 #### LanguageStore (`src/app/core/stores/language.store.ts`)
 
 ```typescript
-import { LanguageStore } from '@core/stores';
+import { LanguageStore } from '@core/stores/language.store';
 
 const languageStore = inject(LanguageStore);
 
@@ -111,7 +159,7 @@ languageStore.toggleLanguage();
 #### ThemeStore (`src/app/core/stores/theme.store.ts`)
 
 ```typescript
-import { ThemeStore } from '@core/stores';
+import { ThemeStore } from '@core/stores/theme.store';
 
 const themeStore = inject(ThemeStore);
 
@@ -123,6 +171,28 @@ themeStore.isLightMode(); // computed
 // Actions
 themeStore.setTheme(Themes.Dark);
 themeStore.toggleTheme();
+```
+
+### Router & SEO Integration
+
+The template includes **reactive SEO management** that waits for translations to load:
+
+**`src/app/core/utils/router-seo.init.ts`**:
+- Automatically updates page title and meta description on route changes
+- Waits for translations to load before applying SEO tags
+- Uses `TranslateService.onLangChange` for reactivity
+- Initialized in `app.config.ts` via `provideAppInitializer`
+
+**Route configuration with SEO**:
+```typescript
+{
+  path: 'home',
+  component: HomeComponent,
+  data: {
+    title: 'routes.home.title',           // Translation key
+    description: 'routes.home.description' // Translation key
+  }
+}
 ```
 
 ### Styling
@@ -161,14 +231,30 @@ See `docs/BACKEND_AUTH_REQUIREMENTS.md` for complete implementation guide.
 - **ngx-translate**: Translation management
 - Translation files: `src/assets/i18n/*.json`
 - Supported languages defined in `Languages` enum
-- Managed by `LanguageStore` with localStorage persistence
+- Managed by `LanguageStore` with cookie persistence
+- SEO integration waits for translations before updating meta tags
 
 ### Path Aliases
+
+**IMPORTANT**: This project does NOT use barrel files (index.ts) for better tree-shaking.
 
 TypeScript path aliases configured in `tsconfig.json`:
 - `@app/*` → `src/app/*`
 - `@core/*` → `src/app/core/*`
-- `@core/environments` → `src/environments/index`
+- `@environments/*` → `src/environments/*`
+
+**Always use direct imports**:
+```typescript
+// ✅ DO THIS
+import { AuthStore } from '@core/stores/auth.store';
+import { Languages } from '@core/types/enums/languages';
+import { environment } from '@environments/environment';
+
+// ❌ DON'T DO THIS (no barrel files)
+import { AuthStore } from '@core/stores';
+import { Languages } from '@core/types';
+import { environment } from '@core/environments';
+```
 
 ### Configuration
 
@@ -179,10 +265,10 @@ TypeScript path aliases configured in `tsconfig.json`:
 Environment variables include:
 - API URL configuration
 - Default language and theme
-- localStorage keys (only for non-sensitive data like theme/language)
+- Cookie keys (only for non-sensitive data like theme/language)
 - Timezone settings
 
-**NOTE**: No auth token keys in environment anymore (cookies handle auth).
+**NOTE**: No auth token keys in environment (cookies handle auth).
 
 ### Application Bootstrap
 
@@ -198,6 +284,15 @@ HTTP client configured with:
 - Fetch API
 - Auth interceptor for CSRF + cookies
 - `withCredentials: true` globally
+
+**App initialization** (`app.config.ts`):
+```typescript
+provideAppInitializer(() => {
+  inject(LanguageStore);  // Init language from cookie
+  inject(ThemeStore);     // Init theme from cookie
+  initRouterSeoUpdates(); // Init SEO with translation support
+})
+```
 
 ### Code Style
 
@@ -250,14 +345,64 @@ export class MyStateService {
 // Create a SignalStore in src/app/core/stores/
 ```
 
+### Feature Development Pattern
+
+When creating a new feature:
+
+1. **Create feature folder**:
+   ```
+   features/my-feature/
+   ├── pages/
+   ├── components/
+   ├── services/
+   └── my-feature.routes.ts
+   ```
+
+2. **Define routes**:
+   ```typescript
+   // features/my-feature/my-feature.routes.ts
+   import { Routes } from '@angular/router';
+
+   export default [
+     { path: '', component: MyFeaturePage }
+   ] as Routes;
+   ```
+
+3. **Lazy load in main routes**:
+   ```typescript
+   // app.routes.ts
+   {
+     path: 'my-feature',
+     loadChildren: () => import('./features/my-feature/my-feature.routes')
+   }
+   ```
+
 ### Router Integration
 
-Custom router state serializer provides simplified router state with URL, params, query params, and route data accessible through NgRx selectors.
+Router state is managed by `RouterStateService` using signals (no NgRx needed):
+
+```typescript
+import { RouterStateService } from '@core/services/router-state.service';
+
+const routerState = inject(RouterStateService);
+
+// Access route data
+routerState.url();        // current URL
+routerState.params();     // route params
+routerState.queryParams(); // query params
+routerState.data();       // route data
+```
 
 ### Guards
 
 - `authGuard` - Protects authenticated routes, checks `AuthStore.isAuthenticated()`
 - `anonymousGuard` - Protects routes for non-authenticated users only
+
+Both guards use direct imports:
+```typescript
+import { authGuard } from '@core/guards/auth.guard';
+import { anonymousGuard } from '@core/guards/anonymous.guard';
+```
 
 ### HTTP Interceptor
 
@@ -291,24 +436,59 @@ origin: 'http://localhost:4200' // Frontend URL
 
 This project uses **pnpm**. Always use `pnpm` commands, not `npm` or `yarn`.
 
+## Best Practices Summary
+
+### Architecture
+- ✅ Feature-first structure
+- ✅ No barrel files (direct imports)
+- ✅ Lazy-loaded features
+- ✅ SignalStore for state
+- ✅ Services only for utilities (not state)
+
+### Security
+- ✅ HttpOnly cookies for auth
+- ✅ CSRF protection
+- ✅ XSS-safe pipes
+- ✅ No sensitive data in localStorage
+
+### Performance
+- ✅ Zoneless change detection
+- ✅ Signal-based reactivity
+- ✅ Better tree-shaking (no barrels)
+- ✅ Lazy loading
+- ✅ Fetch API
+
+### Code Quality
+- ✅ Strict TypeScript
+- ✅ Biome linting/formatting
+- ✅ Pre-commit hooks
+- ✅ Direct imports
+- ✅ Consistent naming
+
+### Developer Experience
+- ✅ Fast testing (Vitest)
+- ✅ Type-safe routing
+- ✅ Path aliases
+- ✅ Clear documentation
+- ✅ Modern patterns
+
 ## Migration Notes
 
-This project was migrated from Angular 18 → 21 with major architectural changes:
+This project represents the modern Angular 21 architecture:
 
-### Changes Made:
-1. **Angular 18 → 21** (zoneless is now default)
-2. **Jest → Vitest** (faster, better DX)
-3. **Services → SignalStores** (auth, language, theme)
-4. **localStorage auth → HttpOnly cookies** (XSS protection)
-5. **TailwindCSS v3 → v4**
-6. **NgRx 18 → 21** with SignalStore
+### Key Architectural Decisions:
+1. **Zoneless change detection** - Default in Angular 21
+2. **SignalStore over services** - Modern state management
+3. **HttpOnly cookies** - XSS protection for auth
+4. **No barrel files** - Better tree-shaking
+5. **Feature-first** - Scalable architecture
+6. **Vitest over Jest** - Faster testing
 
-### Breaking Changes:
-- `AuthService` → `AuthStore`
-- `LanguageService` → `LanguageStore`
-- `ThemeService` → `ThemeStore`
-- Auth tokens NO LONGER in localStorage
+### Breaking Changes from Traditional Angular:
+- No NgModules (standalone components only)
+- No `index.ts` barrel files
+- No localStorage for auth tokens
 - CSRF token required for mutations
-- Backend must implement HttpOnly cookie auth
+- Router state via signals (not NgRx router store)
 
-See `MIGRATION_PLAN_ANGULAR_21.md` for full migration details.
+For complete backend auth implementation, see `docs/BACKEND_AUTH_REQUIREMENTS.md`.
