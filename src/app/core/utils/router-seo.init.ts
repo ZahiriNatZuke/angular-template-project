@@ -1,6 +1,7 @@
 import { effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RouterStateService, SeoService } from '@core/services';
+import { RouterStateService } from '@core/services/router-state.service';
+import { SeoService } from '@core/services/seo.service';
 import { TranslateService } from '@ngx-translate/core';
 import { startWith } from 'rxjs/operators';
 

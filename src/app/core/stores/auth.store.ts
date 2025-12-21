@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment } from '@core/environments';
+import { environment } from '@environments/environment';
 import { tapResponse } from '@ngrx/operators';
 import {
 	patchState,

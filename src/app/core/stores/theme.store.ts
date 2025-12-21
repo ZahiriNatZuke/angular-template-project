@@ -1,9 +1,9 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { computed, inject, PLATFORM_ID } from '@angular/core';
-import { environment } from '@core/environments';
-import { Themes } from '@core/types';
-import { CookieUtils } from '@core/utils';
+import { Themes } from '@core/types/enums/themes';
+import { CookieUtils } from '@core/utils/cookie.utils';
+import { environment } from '@environments/environment';
 import {
 	patchState,
 	signalStore,

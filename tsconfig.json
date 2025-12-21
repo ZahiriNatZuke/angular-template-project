@@ -22,7 +22,7 @@
 		"paths": {
 			"@app/*": ["src/app/*"],
 			"@core/*": ["src/app/core/*"],
-			"@core/environments": ["src/environments/index"]
+			"@environments/*": ["src/environments/*"]
 		},
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true

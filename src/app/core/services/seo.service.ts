@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
-import { environment } from '@core/environments';
-import { Seo } from '@core/types';
+import { Seo } from '@core/types/interfaces/seo';
+import { environment } from '@environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })

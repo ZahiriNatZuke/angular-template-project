@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
-import { AuthStore } from '@core/stores';
+import { AuthStore } from '@core/stores/auth.store';
 
 export const anonymousGuard: CanActivateFn = (_route, _state) => {
 	const authStore = inject(AuthStore);

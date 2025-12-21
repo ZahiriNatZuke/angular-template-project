@@ -1,4 +1,4 @@
-import { Languages } from '@core/types';
+import { Languages } from '@core/types/enums/languages';
 
 export const environment = {
 	production: true,

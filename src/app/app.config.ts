@@ -20,10 +20,11 @@ import {
 	withRouterConfig,
 	withViewTransitions,
 } from '@angular/router';
-import { environment } from '@core/environments';
-import { authInterceptor } from '@core/interceptors';
-import { LanguageStore, ThemeStore } from '@core/stores';
+import { authInterceptor } from '@core/interceptors/auth.interceptor';
+import { LanguageStore } from '@core/stores/language.store';
+import { ThemeStore } from '@core/stores/theme.store';
 import { initRouterSeoUpdates } from '@core/utils/router-seo.init';
+import { environment } from '@environments/environment';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';

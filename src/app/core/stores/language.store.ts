@@ -1,8 +1,8 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { computed, inject, PLATFORM_ID } from '@angular/core';
-import { environment } from '@core/environments';
-import { Languages } from '@core/types';
-import { CookieUtils } from '@core/utils';
+import { Languages } from '@core/types/enums/languages';
+import { CookieUtils } from '@core/utils/cookie.utils';
+import { environment } from '@environments/environment';
 import {
 	patchState,
 	signalStore,
