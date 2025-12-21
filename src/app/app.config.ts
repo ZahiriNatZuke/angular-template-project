@@ -39,7 +39,6 @@ export const appConfig: ApplicationConfig = {
 			withComponentInputBinding(),
 			withRouterConfig({
 				onSameUrlNavigation: 'reload',
-				urlUpdateStrategy: 'eager',
 			}),
 			withInMemoryScrolling({
 				anchorScrolling: 'enabled',
