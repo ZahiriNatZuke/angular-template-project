@@ -2,8 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { LanguageStore } from '@core/stores/language.store';
 import { ThemeStore } from '@core/stores/theme.store';
 import { Languages } from '@core/types/enums/languages';
-import { environment } from '@environments/environment';
 import { TranslatePipe } from '@ngx-translate/core';
+import { version } from '../../package.json';
 
 @Component({
 	selector: 'app-root',
@@ -15,7 +15,7 @@ export class AppComponent {
 	languageStore = inject(LanguageStore);
 	themeStore = inject(ThemeStore);
 
-	version = signal(environment.version);
+	version = signal(version);
 	repoUrl = signal('https://github.com/ZahiriNatZuke/angular-template-project');
 	authorUrl = signal('https://github.com/ZahiriNatZuke');
 

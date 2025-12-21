@@ -39,7 +39,7 @@
     "test:coverage": "vitest --coverage",
     "format": "biome format --fix",
     "lint": "biome check --fix --unsafe",
-    "precommit": "pnpm run lint && pnpm run format",
+    "precommit": "npm run lint && npm run format",
     "prepare": "husky"
   },
   "private": false,
