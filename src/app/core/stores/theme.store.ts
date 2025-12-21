@@ -38,27 +38,27 @@ export const ThemeStore = signalStore(
 			mediaMatcher = inject(MediaMatcher)
 		) => ({
 			setTheme(theme: Themes) {
-				if (!isPlatformBrowser(platformId)) return;
+				if (isPlatformBrowser(platformId)) {
+					const htmlElement = document.querySelector('html');
+					const body = document.body;
 
-				const htmlElement = document.querySelector('html');
-				const body = document.body;
+					// Update data-theme attribute
+					htmlElement?.setAttribute('data-theme', theme);
 
-				// Update data-theme attribute
-				htmlElement?.setAttribute('data-theme', theme);
+					// Update body classes
+					body.classList.remove(Themes.Light, Themes.Dark);
+					body.classList.add(theme);
 
-				// Update body classes
-				body.classList.remove(Themes.Light, Themes.Dark);
-				body.classList.add(theme);
+					// Save to cookie (expires in 1 year, accessible by JavaScript)
+					CookieUtils.set(environment.themeKey, theme, {
+						expires: 365,
+						path: '/',
+						sameSite: 'Lax',
+					});
 
-				// Save to cookie (expires in 1 year, accessible by JavaScript)
-				CookieUtils.set(environment.themeKey, theme, {
-					expires: 365,
-					path: '/',
-					sameSite: 'Lax',
-				});
-
-				// Update state
-				patchState(store, { current: theme });
+					// Update state
+					patchState(store, { current: theme });
+				}
 			},
 
 			toggleTheme() {
@@ -68,25 +68,25 @@ export const ThemeStore = signalStore(
 			},
 
 			initTheme() {
-				if (!isPlatformBrowser(platformId)) return;
+				if (isPlatformBrowser(platformId)) {
+					// Check cookie first
+					const savedTheme = CookieUtils.get(environment.themeKey) as Themes;
+					if (savedTheme) {
+						this.setTheme(savedTheme);
+						return;
+					}
 
-				// Check cookie first
-				const savedTheme = CookieUtils.get(environment.themeKey) as Themes;
-				if (savedTheme) {
-					this.setTheme(savedTheme);
-					return;
+					// Otherwise, check system preference
+					const darkModeQuery = mediaMatcher.matchMedia(
+						'(prefers-color-scheme: dark)'
+					);
+					const preferredTheme = darkModeQuery.matches
+						? Themes.Dark
+						: Themes.Light;
+
+					patchState(store, { prefersDark: darkModeQuery.matches });
+					this.setTheme(preferredTheme);
 				}
-
-				// Otherwise, check system preference
-				const darkModeQuery = mediaMatcher.matchMedia(
-					'(prefers-color-scheme: dark)'
-				);
-				const preferredTheme = darkModeQuery.matches
-					? Themes.Dark
-					: Themes.Light;
-
-				patchState(store, { prefersDark: darkModeQuery.matches });
-				this.setTheme(preferredTheme);
 			},
 		})
 	),

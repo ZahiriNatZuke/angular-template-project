@@ -1,1 +1,12 @@
-{}
+{
+	"routes": {
+		"home": {
+			"title": "Home",
+			"description": "Welcome to the home page"
+		}
+	},
+	"home": {
+		"greetings": "Hello, {{app}}",
+		"welcomeMessage": "Congratulations! Your app is running."
+	}
+}

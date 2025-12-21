@@ -1,1 +1,12 @@
-{}
+{
+	"routes": {
+		"home": {
+			"title": "Inicio",
+			"description": "Bienvenido a la página de inicio"
+		}
+	},
+	"home": {
+		"greetings": "Hola, {{app}}",
+		"welcomeMessage": "¡Felicidades! Tu aplicación está en funcionamiento."
+	}
+}

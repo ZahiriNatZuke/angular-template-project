@@ -47,7 +47,7 @@
         </clipPath>
       </defs>
     </svg>
-    <h1>Hello, {{ title() }} ️⚡</h1>
-    <p>Congratulations! Your app is running. 🎉</p>
+    <h1>{{ 'home.greetings' | translate: { app: title() } }} ️⚡</h1>
+    <p>{{ 'home.welcomeMessage' | translate }} 🎉</p>
   </div>
 </main>

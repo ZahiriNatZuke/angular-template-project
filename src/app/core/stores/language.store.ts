@@ -38,27 +38,28 @@ export const LanguageStore = signalStore(
 			platformId = inject(PLATFORM_ID)
 		) => ({
 			setLanguage(lang: Languages) {
-				if (!isPlatformBrowser(platformId)) return;
+				console.log('Saving language preference:', lang);
+				if (isPlatformBrowser(platformId)) {
+					const htmlElement = document.querySelector('html');
 
-				const htmlElement = document.querySelector('html');
+					// Save to cookie (expires in 1 year, accessible by JavaScript)
+					CookieUtils.set(environment.languageKey, lang, {
+						expires: 365,
+						path: '/',
+						sameSite: 'Lax',
+					});
 
-				// Save to cookie (expires in 1 year, accessible by JavaScript)
-				CookieUtils.set(environment.languageKey, lang, {
-					expires: 365,
-					path: '/',
-					sameSite: 'Lax',
-				});
+					// Update translate service
+					translate.use(lang);
 
-				// Update translate service
-				translate.use(lang);
+					// Update HTML lang attribute
+					if (htmlElement) {
+						htmlElement.setAttribute('lang', lang);
+					}
 
-				// Update HTML lang attribute
-				if (htmlElement) {
-					htmlElement.setAttribute('lang', lang);
+					// Update state
+					patchState(store, { current: lang });
 				}
-
-				// Update state
-				patchState(store, { current: lang });
 			},
 
 			toggleLanguage() {
@@ -70,14 +71,16 @@ export const LanguageStore = signalStore(
 			},
 
 			initLanguage() {
-				if (!isPlatformBrowser(platformId)) return;
-
-				// Load from cookie on init
-				const savedLang = CookieUtils.get(environment.languageKey) as Languages;
-				if (savedLang && store.available().includes(savedLang)) {
-					this.setLanguage(savedLang);
-				} else {
-					this.setLanguage(environment.defaultLanguage);
+				if (isPlatformBrowser(platformId)) {
+					// Load from cookie on init
+					const savedLang = CookieUtils.get(
+						environment.languageKey
+					) as Languages;
+					if (savedLang && store.available().includes(savedLang)) {
+						this.setLanguage(savedLang);
+					} else {
+						this.setLanguage(environment.defaultLanguage);
+					}
 				}
 			},
 		})

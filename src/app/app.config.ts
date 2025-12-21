@@ -22,7 +22,7 @@ import {
 } from '@angular/router';
 import { environment } from '@core/environments';
 import { authInterceptor } from '@core/interceptors';
-import { LanguageStore } from '@core/stores';
+import { LanguageStore, ThemeStore } from '@core/stores';
 import { initRouterSeoUpdates } from '@core/utils/router-seo.init';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -50,12 +50,15 @@ export const appConfig: ApplicationConfig = {
 		provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
 		provideTranslateService({
 			fallbackLang: environment.defaultLanguage,
+			lang: environment.defaultLanguage,
 		}),
 		provideTranslateHttpLoader({
 			prefix: './assets/i18n/',
 			suffix: '.json',
 		}),
 		provideAppInitializer(() => {
+			inject(LanguageStore);
+			inject(ThemeStore);
 			initRouterSeoUpdates();
 		}),
 		{
@@ -68,8 +71,7 @@ export const appConfig: ApplicationConfig = {
 		{
 			provide: LOCALE_ID,
 			useFactory: () => {
-				const languageStore = inject(LanguageStore);
-				return languageStore.current();
+				return inject(LanguageStore).current();
 			},
 		},
 	],
