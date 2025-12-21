@@ -1,7 +1,25 @@
 {
   "name": "angular-template-project",
   "version": "0.0.6",
-  "description": "Project for Angular Template",
+  "description": "Modern Angular 21 template with zoneless change detection, NgRx SignalStore, ultra-secure HttpOnly cookie authentication, TailwindCSS v4, and i18n support. Production-ready with best practices for security, performance, and scalability.",
+  "keywords": [
+    "angular",
+    "angular-21",
+    "template",
+    "standalone-components",
+    "zoneless",
+    "ngrx-signalstore",
+    "tailwindcss",
+    "daisyui",
+    "authentication",
+    "httponly-cookies",
+    "csrf-protection",
+    "i18n",
+    "seo",
+    "vitest",
+    "biome",
+    "pnpm"
+  ],
   "author": {
     "name": "Yohan González Almaguer",
     "email": "yohan.gonzalez.almaguer@gmail.com",
@@ -66,6 +84,7 @@
     "vitest": "^4.0.16"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=18.19.0",
+    "pnpm": ">=8.0.0"
   }
 }
