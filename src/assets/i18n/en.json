@@ -1,12 +1,102 @@
 {
 	"routes": {
 		"home": {
-			"title": "Home",
-			"description": "Welcome to the home page"
+			"title": "Angular 21 Template - Modern & Secure",
+			"description": "Production-ready Angular 21 template with zoneless change detection, NgRx SignalStore, ultra-secure authentication, TailwindCSS v4, and best practices."
 		}
 	},
 	"home": {
-		"greetings": "Hello, {{app}}",
-		"welcomeMessage": "Congratulations! Your app is running."
+		"hero": {
+			"title": "Angular 21 Template",
+			"subtitle": "Modern & Production-Ready",
+			"description": "A comprehensive Angular 21 template with enterprise-grade features, security-first authentication, and performance optimizations built-in.",
+			"cta": {
+				"clone": "Clone Repository",
+				"docs": "View Documentation"
+			}
+		},
+		"features": {
+			"title": "What's Included",
+			"angular": {
+				"title": "Angular 21",
+				"description": "Standalone components with zoneless change detection for optimal performance"
+			},
+			"auth": {
+				"title": "Ultra-Secure Auth",
+				"description": "HttpOnly cookies with CSRF protection, immune to XSS attacks"
+			},
+			"state": {
+				"title": "SignalStore",
+				"description": "NgRx SignalStore for reactive, type-safe state management"
+			},
+			"styling": {
+				"title": "TailwindCSS v4",
+				"description": "Modern styling with DaisyUI component library"
+			},
+			"i18n": {
+				"title": "Internationalization",
+				"description": "Built-in i18n with ngx-translate and reactive language switching"
+			},
+			"testing": {
+				"title": "Vitest",
+				"description": "Fast unit testing with modern tooling"
+			}
+		},
+		"techStack": {
+			"title": "Technology Stack",
+			"frontend": "Frontend",
+			"state": "State Management",
+			"styling": "Styling",
+			"testing": "Testing",
+			"tooling": "Tooling"
+		},
+		"practices": {
+			"title": "Best Practices",
+			"security": {
+				"title": "Security First",
+				"items": [
+					"HttpOnly cookies for authentication",
+					"CSRF protection on mutations",
+					"No sensitive data in localStorage",
+					"XSS-safe pipes",
+					"Automatic session validation"
+				]
+			},
+			"performance": {
+				"title": "Performance",
+				"items": [
+					"Zoneless change detection",
+					"Signal-based reactivity",
+					"No barrel files (better tree-shaking)",
+					"Lazy loading ready",
+					"Fetch API optimization"
+				]
+			},
+			"architecture": {
+				"title": "Architecture",
+				"items": [
+					"Feature-first structure",
+					"Standalone components",
+					"SignalStore patterns",
+					"Reactive programming",
+					"Clear separation of concerns"
+				]
+			},
+			"dx": {
+				"title": "Developer Experience",
+				"items": [
+					"Fast testing with Vitest",
+					"Biome for linting/formatting",
+					"Pre-commit hooks",
+					"Path aliases",
+					"Type-safe routing"
+				]
+			}
+		},
+		"footer": {
+			"madeBy": "Created by",
+			"license": "MIT License",
+			"version": "Version"
+		}
 	}
 }

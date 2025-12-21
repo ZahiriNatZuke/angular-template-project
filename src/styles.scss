@@ -1,2 +1,43 @@
 @use 'tailwindcss';
 @plugin "daisyui";
+
+/* Custom theme configurations */
+@theme {
+	/* Increase base font weight for better readability */
+	--font-weight-normal: 450;
+	--font-weight-medium: 550;
+	--font-weight-semibold: 650;
+}
+
+/* Light mode improvements for better contrast and readability */
+[data-theme="light"] {
+	color-scheme: light;
+
+	/* Base backgrounds - proper light theme with good contrast */
+	--b1: 100% 0 0; /* Pure white background */
+	--b2: 96% 0.01 250; /* Light gray for sections */
+	--b3: 92% 0.015 250; /* Medium gray for cards */
+
+	/* Text color - much darker for excellent readability */
+	--bc: 25% 0.015 250; /* Very dark gray, almost black */
+
+	/* Primary colors - adjusted for light backgrounds */
+	--p: 52% 0.22 328; /* Vibrant pink-magenta */
+	--pc: 100% 0 0; /* White text on primary */
+
+	--s: 62% 0.25 266; /* Vibrant purple */
+	--sc: 100% 0 0; /* White text on secondary */
+
+	--a: 62% 0.2 237; /* Vibrant blue */
+	--ac: 100% 0 0; /* White text on accent */
+
+	/* Neutral color for better contrast */
+	--n: 30% 0.02 250; /* Dark neutral */
+	--nc: 100% 0 0; /* White text on neutral */
+
+	/* State colors */
+	--su: 65% 0.2 145; /* Green for success */
+	--wa: 75% 0.15 85; /* Yellow for warning */
+	--er: 60% 0.22 25; /* Red for error */
+	--in: 65% 0.18 230; /* Blue for info */
+}
