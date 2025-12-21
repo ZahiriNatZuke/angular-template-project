@@ -8,4 +8,5 @@ export const environment = {
 	languageKey: 'X-Language',
 	themeKey: 'X-Theme-UI',
 	timeZone: 'America\\Havana',
+	version: '0.0.6',
 };
