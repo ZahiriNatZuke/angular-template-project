@@ -38,7 +38,6 @@ export const LanguageStore = signalStore(
 			platformId = inject(PLATFORM_ID)
 		) => ({
 			setLanguage(lang: Languages) {
-				console.log('Saving language preference:', lang);
 				if (isPlatformBrowser(platformId)) {
 					const htmlElement = document.querySelector('html');
 
