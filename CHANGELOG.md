@@ -22,6 +22,15 @@ absorb by copying files across.
   changes, a runner updates Node, a package is unpublished — and the weekly run catches it
   before the next person to clone it does.
 - **Coverage thresholds** enforced in CI, so coverage cannot silently regress.
+- Tests for the two `safe-*` pipes, `SeoService`, `RouterStateService`, `NotifyService`,
+  and the login, dashboard and home pages. The suite goes from 46 to 91 tests.
+
+### Fixed
+
+- **`RouterStateService.params()` and `.queryParams()` returned garbage.** They read
+  `route.params` and `route.queryParams`, which are Observables, so spreading them copied
+  the Subject's internals (`_value`, `closed`, `observers`) instead of the values. They now
+  read from `route.snapshot`, consistent with how the service already handled `data`.
 
 ## [2.0.0]
 

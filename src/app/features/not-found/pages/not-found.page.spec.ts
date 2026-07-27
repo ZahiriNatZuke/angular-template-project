@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { provideLocationMocks } from '@angular/common/testing';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -63,6 +64,20 @@ describe('NotFoundPage', () => {
 
 		// Sin esto, el noindex seguiría activo en el resto de la navegación.
 		expect(meta.getTag('name="robots"')).toBeNull();
+	});
+
+	it('goBack devuelve al historial anterior', async () => {
+		const router = TestBed.inject(Router);
+		await router.navigateByUrl('/');
+		await router.navigateByUrl('/ruta-rota');
+
+		const fixture = TestBed.createComponent(NotFoundPage);
+		await fixture.whenStable();
+
+		fixture.componentInstance.goBack();
+		await fixture.whenStable();
+
+		expect(TestBed.inject(Location).path()).toBe('/');
 	});
 
 	it('el comodín resuelve a la página 404 en lugar de redirigir', async () => {
