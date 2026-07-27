@@ -1,0 +1,116 @@
+<section class="hero min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
+  <div class="hero-content w-full max-w-md">
+    <div class="card bg-base-100 shadow-xl w-full">
+      <div class="card-body">
+        <h1 class="card-title text-3xl mb-1">{{ 'auth.login.title' | translate }}</h1>
+        <p class="text-base-content/70 font-medium mb-4">{{ 'auth.login.subtitle' | translate }}</p>
+
+        @if (authStore.error(); as error) {
+          <div role="alert" class="alert alert-error mb-4">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="font-medium">{{ error }}</span>
+            <button type="button" class="btn btn-ghost btn-xs" (click)="authStore.clearError()">
+              {{ 'auth.login.dismiss' | translate }}
+            </button>
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+          <!-- Email -->
+          <div class="form-control">
+            <label class="label" for="email">
+              <span class="label-text font-medium">{{ 'auth.login.email.label' | translate }}</span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              autocomplete="email"
+              formControlName="email"
+              class="input input-bordered w-full"
+              [class.input-error]="form.controls.email.touched && form.controls.email.invalid"
+              [placeholder]="'auth.login.email.placeholder' | translate"
+            />
+            @if (form.controls.email.touched && form.controls.email.invalid) {
+              <p class="text-error text-sm mt-1 font-medium">
+                @if (form.controls.email.hasError('required')) {
+                  {{ 'auth.login.email.required' | translate }}
+                } @else {
+                  {{ 'auth.login.email.invalid' | translate }}
+                }
+              </p>
+            }
+          </div>
+
+          <!-- Password -->
+          <div class="form-control">
+            <label class="label" for="password">
+              <span class="label-text font-medium">{{ 'auth.login.password.label' | translate }}</span>
+            </label>
+            <div class="join w-full">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                autocomplete="current-password"
+                formControlName="password"
+                class="input input-bordered join-item w-full"
+                [class.input-error]="form.controls.password.touched && form.controls.password.invalid"
+                [placeholder]="'auth.login.password.placeholder' | translate"
+              />
+              <button
+                type="button"
+                class="btn btn-outline join-item"
+                (click)="togglePassword()"
+                [attr.aria-label]="'auth.login.password.toggle' | translate"
+              >
+                @if (showPassword()) {
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                  </svg>
+                } @else {
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                }
+              </button>
+            </div>
+            @if (form.controls.password.touched && form.controls.password.invalid) {
+              <p class="text-error text-sm mt-1 font-medium">
+                @if (form.controls.password.hasError('required')) {
+                  {{ 'auth.login.password.required' | translate }}
+                } @else {
+                  {{ 'auth.login.password.minLength' | translate }}
+                }
+              </p>
+            }
+          </div>
+
+          <!-- Remember me -->
+          <div class="form-control">
+            <label class="label cursor-pointer justify-start gap-3" for="rememberMe">
+              <input id="rememberMe" type="checkbox" formControlName="rememberMe" class="checkbox checkbox-primary" />
+              <span class="label-text font-medium">{{ 'auth.login.rememberMe' | translate }}</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full" [disabled]="authStore.isLoading()">
+            @if (authStore.isLoading()) {
+              <span class="loading loading-spinner loading-sm"></span>
+            }
+            {{ 'auth.login.submit' | translate }}
+          </button>
+        </form>
+
+        <div class="divider text-sm opacity-70">{{ 'auth.login.or' | translate }}</div>
+
+        <a routerLink="/" class="btn btn-ghost btn-sm">{{ 'auth.login.backHome' | translate }}</a>
+
+        <p class="text-xs text-base-content/60 mt-4 leading-relaxed">
+          {{ 'auth.login.note' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { AuthStore } from '@core/stores/auth.store';
 import { LanguageStore } from '@core/stores/language.store';
 import { ThemeStore } from '@core/stores/theme.store';
 import { Languages } from '@core/types/enums/languages';
@@ -14,6 +15,7 @@ import { version } from '../../package.json';
 	imports: [TranslatePipe, RouterOutlet, RouterLink],
 })
 export class AppComponent {
+	authStore = inject(AuthStore);
 	languageStore = inject(LanguageStore);
 	themeStore = inject(ThemeStore);
 

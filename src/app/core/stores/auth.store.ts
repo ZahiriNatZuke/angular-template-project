@@ -77,10 +77,12 @@ export const AuthStore = signalStore(
 			email: string;
 			password: string;
 			rememberMe: boolean;
+			/** Ruta a la que volver tras autenticarse; por defecto `/dashboard`. */
+			returnUrl?: string;
 		}>(
 			pipe(
 				tap(() => patchState(store, { isLoading: true, error: null })),
-				switchMap(({ email, password, rememberMe }) =>
+				switchMap(({ email, password, rememberMe, returnUrl }) =>
 					http
 						.post<{ user: User }>(`${environment.apiUrl}/auth/login`, {
 							email,
@@ -96,7 +98,7 @@ export const AuthStore = signalStore(
 										isLoading: false,
 										error: null,
 									});
-									router.navigate(['/dashboard']);
+									router.navigateByUrl(returnUrl || '/dashboard');
 								},
 								error: (error: HttpErrorResponse) => {
 									patchState(store, {

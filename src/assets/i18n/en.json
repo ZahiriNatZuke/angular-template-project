@@ -3,6 +3,57 @@
 		"home": {
 			"title": "Angular 21 Template - Modern & Secure",
 			"description": "Production-ready Angular 21 template with zoneless change detection, NgRx SignalStore, ultra-secure authentication, TailwindCSS v4, and best practices."
+		},
+		"login": {
+			"title": "Sign in - Angular 21 Template",
+			"description": "Sign in with HttpOnly cookie based authentication and CSRF protection."
+		},
+		"dashboard": {
+			"title": "Dashboard - Angular 21 Template",
+			"description": "Protected area available only to authenticated users."
+		}
+	},
+	"nav": {
+		"login": "Sign in",
+		"dashboard": "Dashboard"
+	},
+	"auth": {
+		"login": {
+			"title": "Sign in",
+			"subtitle": "Access your account securely",
+			"email": {
+				"label": "Email",
+				"placeholder": "you@example.com",
+				"required": "Email is required",
+				"invalid": "Enter a valid email address"
+			},
+			"password": {
+				"label": "Password",
+				"placeholder": "Your password",
+				"required": "Password is required",
+				"minLength": "Password must be at least 8 characters",
+				"toggle": "Toggle password visibility"
+			},
+			"rememberMe": "Keep me signed in",
+			"submit": "Sign in",
+			"dismiss": "Dismiss",
+			"or": "or",
+			"backHome": "Back to home",
+			"note": "This form talks to the backend described in docs/BACKEND_AUTH_REQUIREMENTS.md. Tokens never reach JavaScript: the server replies with HttpOnly cookies and every mutation carries a CSRF token."
+		}
+	},
+	"dashboard": {
+		"title": "Dashboard",
+		"welcome": "Welcome",
+		"logout": "Sign out",
+		"card": {
+			"name": "Name",
+			"email": "Email",
+			"role": "Role"
+		},
+		"session": {
+			"title": "About this session",
+			"description": "This route is protected by authGuard. The session lives in HttpOnly cookies, so it survives a reload and stays out of reach of any script running on the page."
 		}
 	},
 	"home": {
