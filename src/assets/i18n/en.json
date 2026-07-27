@@ -11,11 +11,21 @@
 		"dashboard": {
 			"title": "Dashboard - Angular 22 Template",
 			"description": "Protected area available only to authenticated users."
+		},
+		"notFound": {
+			"title": "Page not found - Angular 22 Template",
+			"description": "The page you were looking for does not exist."
 		}
 	},
 	"nav": {
 		"login": "Sign in",
 		"dashboard": "Dashboard"
+	},
+	"notFound": {
+		"title": "This page does not exist",
+		"description": "The link may be out of date, or the address may have a typo. Nothing was broken on your side.",
+		"home": "Back to home",
+		"back": "Go back"
 	},
 	"auth": {
 		"login": {

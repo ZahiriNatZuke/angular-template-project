@@ -1,0 +1,38 @@
+<section class="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-16">
+  <!-- Resplandor de marca, decorativo -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 -top-40 h-96 bg-[radial-gradient(60%_100%_at_50%_0%,var(--color-primary)_0%,transparent_70%)] opacity-15"
+  ></div>
+
+  <div class="relative w-full max-w-lg text-center">
+    <p aria-hidden="true" class="text-brand-gradient mb-2 text-7xl font-semibold tracking-tight md:text-8xl">
+      404
+    </p>
+
+    <h1 class="mb-3 text-2xl md:text-3xl font-semibold tracking-tight">
+      {{ 'notFound.title' | translate }}
+    </h1>
+
+    <p class="mb-6 text-base-content/70 leading-relaxed">
+      {{ 'notFound.description' | translate }}
+    </p>
+
+    <p class="mb-8">
+      <code class="inline-block max-w-full overflow-x-auto rounded-field border border-base-300 bg-base-200 px-3 py-1.5 text-sm text-base-content/80">
+        {{ attemptedUrl() }}
+      </code>
+    </p>
+
+    <div class="flex flex-wrap justify-center gap-3">
+      <a routerLink="/" class="btn btn-primary gap-2">
+        <svg aria-hidden="true" lucideHouse class="size-4"></svg>
+        {{ 'notFound.home' | translate }}
+      </a>
+      <button type="button" class="btn btn-ghost gap-2" (click)="goBack()">
+        <svg aria-hidden="true" lucideArrowLeft class="size-4"></svg>
+        {{ 'notFound.back' | translate }}
+      </button>
+    </div>
+  </div>
+</section>

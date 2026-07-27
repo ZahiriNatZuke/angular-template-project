@@ -16,8 +16,10 @@ export const routes: Routes = [
 		path: '',
 		loadChildren: () => import('./features/home/home.routes'),
 	},
+	// El comodín muestra una 404 en lugar de redirigir en silencio al inicio:
+	// una redirección esconde los enlaces rotos en vez de señalarlos.
 	{
 		path: '**',
-		redirectTo: '',
+		loadChildren: () => import('./features/not-found/not-found.routes'),
 	},
 ];
