@@ -1,15 +1,15 @@
 {
 	"routes": {
 		"home": {
-			"title": "Angular 21 Template - Modern & Secure",
-			"description": "Production-ready Angular 21 template with zoneless change detection, NgRx SignalStore, ultra-secure authentication, TailwindCSS v4, and best practices."
+			"title": "Angular 22 Template - Modern & Secure",
+			"description": "Production-ready Angular 22 template with zoneless change detection, NgRx SignalStore, ultra-secure authentication, TailwindCSS v4, and best practices."
 		},
 		"login": {
-			"title": "Sign in - Angular 21 Template",
+			"title": "Sign in - Angular 22 Template",
 			"description": "Sign in with HttpOnly cookie based authentication and CSRF protection."
 		},
 		"dashboard": {
-			"title": "Dashboard - Angular 21 Template",
+			"title": "Dashboard - Angular 22 Template",
 			"description": "Protected area available only to authenticated users."
 		}
 	},
@@ -58,9 +58,9 @@
 	},
 	"home": {
 		"hero": {
-			"title": "Angular 21 Template",
+			"title": "Angular 22 Template",
 			"subtitle": "Modern & Production-Ready",
-			"description": "A comprehensive Angular 21 template with enterprise-grade features, security-first authentication, and performance optimizations built-in.",
+			"description": "A comprehensive Angular 22 template with enterprise-grade features, security-first authentication, and performance optimizations built-in.",
 			"cta": {
 				"clone": "Clone Repository",
 				"docs": "View Documentation"
@@ -69,7 +69,7 @@
 		"features": {
 			"title": "What's Included",
 			"angular": {
-				"title": "Angular 21",
+				"title": "Angular 22",
 				"description": "Standalone components with zoneless change detection for optimal performance"
 			},
 			"auth": {

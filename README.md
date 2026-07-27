@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ZahiriNatZuke/angular-template-project/actions/workflows/ci.yml/badge.svg)](https://github.com/ZahiriNatZuke/angular-template-project/actions/workflows/ci.yml)
 
-A modern, production-ready Angular 21 template with best practices, security-first authentication, and performance optimizations built-in.
+A modern, production-ready Angular 22 template with best practices, security-first authentication, and performance optimizations built-in.
 
 ## Overview
 
@@ -11,7 +11,7 @@ This template provides a solid foundation for building scalable Angular applicat
 ## Key Features
 
 ### Modern Angular Stack
-- **Angular 21** with standalone components (no modules)
+- **Angular 22** with standalone components (no modules)
 - **Zoneless change detection** for optimal performance
 - **Signal-based reactivity** throughout the application
 - **NgRx SignalStore** for state management
@@ -190,7 +190,7 @@ export default [
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js `^22.22.3 || ^24.15.0 || >=26.0.0` (required by the Angular 22 CLI)
 - pnpm 8+
 
 ### Installation

@@ -2,7 +2,6 @@
 {
 	"compileOnSave": false,
 	"compilerOptions": {
-		"baseUrl": "./",
 		"outDir": "./dist/out-tsc",
 		"strict": true,
 		"noImplicitOverride": true,
@@ -20,12 +19,13 @@
 		"module": "ES2022",
 		"useDefineForClassFields": false,
 		"resolveJsonModule": true,
+		// Sin `baseUrl`, deprecado en TypeScript 6: los `paths` se resuelven
+		// relativos a la ubicación de este tsconfig.
 		"paths": {
-			"@app/*": ["src/app/*"],
-			"@core/*": ["src/app/core/*"],
-			"@environments/*": ["src/environments/*"]
+			"@app/*": ["./src/app/*"],
+			"@core/*": ["./src/app/core/*"],
+			"@environments/*": ["./src/environments/*"]
 		},
-		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true
 	},
 	"angularCompilerOptions": {
