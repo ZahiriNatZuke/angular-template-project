@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Una plantilla puede romperse sin un solo commit, por deriva del ecosistema:
+  # una acción que cambia, un runner que actualiza Node, un paquete despublicado.
+  # La ejecución semanal lo detecta antes que el siguiente usuario que la clone.
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
 
 # Una serie de pushes rápidos a la misma rama cancela las ejecuciones previas.
 concurrency:
@@ -51,7 +57,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm test --run
+      # Se ejecuta con cobertura para que los umbrales de `vitest.config.ts`
+      # actúen como puerta: sin esto la cobertura podría caer sin que nadie
+      # se entere.
+      - run: pnpm test:coverage --run
 
   build:
     name: Production build

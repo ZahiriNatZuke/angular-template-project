@@ -1,0 +1,61 @@
+version: 2
+
+# La obsolescencia es el modo de fallo característico de una plantilla: nadie
+# la usa a diario, así que se pudre en silencio hasta que alguien la clona y no
+# compila. Las actualizaciones se agrupan por ecosistema porque subir Angular
+# pieza a pieza produce PRs que no pasan CI por sí solos.
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      angular:
+        patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - '@schematics/*'
+      testing:
+        patterns:
+          - vitest
+          - '@vitest/*'
+          - '@analogjs/*'
+          - jsdom
+      styling:
+        patterns:
+          - tailwindcss
+          - '@tailwindcss/*'
+          - daisyui
+          - lucide
+          - '@lucide/*'
+      tooling:
+        patterns:
+          - '@biomejs/*'
+          - husky
+          - '@types/*'
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # Angular 22 declara el peer `typescript: ">=6.0 <6.1"`. TypeScript 7 ya
+      # es la versión `latest` en npm, así que sin esta regla Dependabot abriría
+      # un PR que rompe la compilación en cada release.
+      - dependency-name: typescript
+        versions:
+          - '>=6.1'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: ci

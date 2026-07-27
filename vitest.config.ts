@@ -31,6 +31,19 @@ export default defineConfig({
 				'**/*.config.ts',
 				'**/environments/**',
 			],
+			// Los umbrales miden solo los ficheros que los tests importan, no todo
+			// `src/`. Sirven para impedir que la cobertura de lo ya cubierto se
+			// degrade, no para afirmar que el proyecto entero está cubierto.
+			//
+			// Las ramas van más bajas a propósito: buena parte de las no cubiertas
+			// son caminos de SSR (`isPlatformBrowser` en falso), inalcanzables
+			// bajo jsdom.
+			thresholds: {
+				lines: 90,
+				functions: 90,
+				statements: 90,
+				branches: 70,
+			},
 		},
 	},
 	define: {
