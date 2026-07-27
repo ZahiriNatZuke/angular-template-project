@@ -540,9 +540,14 @@ this.themeStore.setTheme(Themes.Dark);
 
 This template was created with modern Angular best practices, focusing on security, performance, and developer experience.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, what CI checks, and the conventions the
+codebase follows. Notable changes are tracked in [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
-MIT License - feel free to use this template for any project.
+[MIT](LICENSE) — feel free to use this template for any project.
 
 ## Support
 
