@@ -33,6 +33,14 @@ describe('CookieUtils', () => {
 		CookieUtils.delete(`${NAME}-Extra`);
 	});
 
+	it('acepta domain y secure sin romper el valor guardado', () => {
+		// `secure` impide que jsdom (http://localhost) persista la cookie, así que
+		// aquí solo se comprueba que la ruta de código no lanza.
+		expect(() =>
+			CookieUtils.set(NAME, 'light', { domain: 'localhost', secure: true })
+		).not.toThrow();
+	});
+
 	it('exists refleja la presencia de la cookie', () => {
 		expect(CookieUtils.exists(NAME)).toBe(false);
 
