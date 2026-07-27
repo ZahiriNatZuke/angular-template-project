@@ -1,7 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { LanguageStore } from '@core/stores/language.store';
 import { ThemeStore } from '@core/stores/theme.store';
 import { Languages } from '@core/types/enums/languages';
+import { APP_LINKS } from '@core/utils/app-links';
 import { TranslatePipe } from '@ngx-translate/core';
 import { version } from '../../package.json';
 
@@ -9,15 +11,15 @@ import { version } from '../../package.json';
 	selector: 'app-root',
 	templateUrl: './app.component.html',
 	styleUrl: './app.component.scss',
-	imports: [TranslatePipe],
+	imports: [TranslatePipe, RouterOutlet, RouterLink],
 })
 export class AppComponent {
 	languageStore = inject(LanguageStore);
 	themeStore = inject(ThemeStore);
 
 	version = signal(version);
-	repoUrl = signal('https://github.com/ZahiriNatZuke/angular-template-project');
-	authorUrl = signal('https://github.com/ZahiriNatZuke');
+	repoUrl = signal(APP_LINKS.repo);
+	authorUrl = signal(APP_LINKS.author);
 
 	Languages = Languages;
 

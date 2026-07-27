@@ -1,0 +1,217 @@
+<!-- Hero Section -->
+<section class="hero min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
+  <div class="hero-content text-center">
+    <div class="max-w-4xl">
+      <div class="mb-8">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" class="w-32 h-32 mx-auto mb-6 animate-pulse">
+          <path fill="url(#angular-gradient)" d="M125 30L31.9 63.2l14.2 123.1L125 230l78.9-43.7 14.2-123.1z"/>
+          <path fill="currentColor" fill-opacity="0.1" d="M125 30v22.2-.1V230l78.9-43.7 14.2-123.1L125 30z"/>
+          <defs>
+            <linearGradient id="angular-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#F0060B"/>
+              <stop offset="100%" style="stop-color:#7702FF"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <h1 class="text-6xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+        {{ 'home.hero.title' | translate }}
+      </h1>
+      <p class="text-2xl font-semibold mb-6 text-base-content/90">
+        {{ 'home.hero.subtitle' | translate }}
+      </p>
+      <p class="text-lg mb-8 max-w-2xl mx-auto text-base-content/80 font-medium">
+        {{ 'home.hero.description' | translate }}
+      </p>
+
+      <div class="flex gap-4 justify-center flex-wrap">
+        <a [href]="repoUrl()" target="_blank" rel="noopener" class="btn btn-primary btn-lg gap-2">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          {{ 'home.hero.cta.clone' | translate }}
+        </a>
+        <a [href]="docsUrl()" target="_blank" rel="noopener" class="btn btn-outline btn-lg">
+          {{ 'home.hero.cta.docs' | translate }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 px-4">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-12">{{ 'home.features.title' | translate }}</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Angular 21 -->
+      <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body">
+          <div class="text-4xl mb-4">⚡</div>
+          <h3 class="card-title">{{ 'home.features.angular.title' | translate }}</h3>
+          <p class="text-base-content/80 font-medium">{{ 'home.features.angular.description' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Ultra-Secure Auth -->
+      <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body">
+          <div class="text-4xl mb-4">🔒</div>
+          <h3 class="card-title">{{ 'home.features.auth.title' | translate }}</h3>
+          <p class="text-base-content/80 font-medium">{{ 'home.features.auth.description' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- SignalStore -->
+      <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body">
+          <div class="text-4xl mb-4">📡</div>
+          <h3 class="card-title">{{ 'home.features.state.title' | translate }}</h3>
+          <p class="text-base-content/80 font-medium">{{ 'home.features.state.description' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- TailwindCSS v4 -->
+      <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body">
+          <div class="text-4xl mb-4">🎨</div>
+          <h3 class="card-title">{{ 'home.features.styling.title' | translate }}</h3>
+          <p class="text-base-content/80 font-medium">{{ 'home.features.styling.description' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- i18n -->
+      <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body">
+          <div class="text-4xl mb-4">🌍</div>
+          <h3 class="card-title">{{ 'home.features.i18n.title' | translate }}</h3>
+          <p class="text-base-content/80 font-medium">{{ 'home.features.i18n.description' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Vitest -->
+      <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body">
+          <div class="text-4xl mb-4">🧪</div>
+          <h3 class="card-title">{{ 'home.features.testing.title' | translate }}</h3>
+          <p class="text-base-content/80 font-medium">{{ 'home.features.testing.description' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tech Stack Section -->
+<section class="py-20 px-4 bg-base-200">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-12">{{ 'home.techStack.title' | translate }}</h2>
+
+    <div class="flex flex-wrap gap-3 justify-center">
+      <div class="badge badge-lg badge-primary gap-2 p-4 font-semibold">Angular 21</div>
+      <div class="badge badge-lg badge-secondary gap-2 p-4 font-semibold">NgRx SignalStore</div>
+      <div class="badge badge-lg badge-accent gap-2 p-4 font-semibold">TailwindCSS v4</div>
+      <div class="badge badge-lg badge-info gap-2 p-4 font-semibold">DaisyUI</div>
+      <div class="badge badge-lg badge-success gap-2 p-4 font-semibold">TypeScript 5.9</div>
+      <div class="badge badge-lg badge-warning gap-2 p-4 font-semibold">Vitest</div>
+      <div class="badge badge-lg badge-error gap-2 p-4 font-semibold">Biome</div>
+      <div class="badge badge-lg badge-primary gap-2 p-4 font-semibold">ngx-translate</div>
+      <div class="badge badge-lg badge-secondary gap-2 p-4 font-semibold">pnpm</div>
+      <div class="badge badge-lg badge-accent gap-2 p-4 font-semibold">Husky</div>
+    </div>
+  </div>
+</section>
+
+<!-- Best Practices Section -->
+<section class="py-20 px-4">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-12">{{ 'home.practices.title' | translate }}</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Security -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h3 class="card-title text-2xl mb-4">
+            <span class="text-3xl mr-2">🔐</span>
+            {{ 'home.practices.security.title' | translate }}
+          </h3>
+          <ul class="space-y-2">
+            @let securityItems = 'home.practices.security.items' | translate;
+            @for (item of securityItems; track item) {
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-success mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="font-medium text-base-content/85">{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Performance -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h3 class="card-title text-2xl mb-4">
+            <span class="text-3xl mr-2">⚡</span>
+            {{ 'home.practices.performance.title' | translate }}
+          </h3>
+          <ul class="space-y-2">
+            @let performanceItems = 'home.practices.performance.items' | translate;
+            @for (item of performanceItems; track item) {
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-success mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="font-medium text-base-content/85">{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Architecture -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h3 class="card-title text-2xl mb-4">
+            <span class="text-3xl mr-2">🏗️</span>
+            {{ 'home.practices.architecture.title' | translate }}
+          </h3>
+          <ul class="space-y-2">
+            @let architectureItems = 'home.practices.architecture.items' | translate;
+            @for (item of architectureItems; track item) {
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-success mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="font-medium text-base-content/85">{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Developer Experience -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h3 class="card-title text-2xl mb-4">
+            <span class="text-3xl mr-2">👨‍💻</span>
+            {{ 'home.practices.dx.title' | translate }}
+          </h3>
+          <ul class="space-y-2">
+            @let dxItems = 'home.practices.dx.items' | translate;
+            @for (item of dxItems; track item) {
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-success mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="font-medium text-base-content/85">{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

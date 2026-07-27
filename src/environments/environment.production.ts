@@ -7,5 +7,5 @@ export const environment = {
 	defaultLanguage: Languages.English,
 	languageKey: 'X-Language',
 	themeKey: 'X-Theme-UI',
-	timeZone: 'America\\Havana',
+	timeZone: 'America/Havana',
 };
