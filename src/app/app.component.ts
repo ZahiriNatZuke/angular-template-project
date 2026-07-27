@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { AngularLogoComponent } from '@core/components/angular-logo.component';
 import { AuthStore } from '@core/stores/auth.store';
 import { LanguageStore } from '@core/stores/language.store';
 import { ThemeStore } from '@core/stores/theme.store';
@@ -12,7 +13,7 @@ import { version } from '../../package.json';
 	selector: 'app-root',
 	templateUrl: './app.component.html',
 	styleUrl: './app.component.scss',
-	imports: [TranslatePipe, RouterOutlet, RouterLink],
+	imports: [TranslatePipe, RouterOutlet, RouterLink, AngularLogoComponent],
 })
 export class AppComponent {
 	authStore = inject(AuthStore);

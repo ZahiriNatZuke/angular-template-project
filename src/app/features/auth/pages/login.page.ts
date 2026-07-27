@@ -8,12 +8,20 @@ import {
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@core/stores/auth.store';
+import { LucideCircleAlert, LucideEye, LucideEyeOff } from '@lucide/angular';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-login-page',
 	templateUrl: './login.page.html',
-	imports: [ReactiveFormsModule, TranslatePipe, RouterLink],
+	imports: [
+		ReactiveFormsModule,
+		TranslatePipe,
+		RouterLink,
+		LucideEye,
+		LucideEyeOff,
+		LucideCircleAlert,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPage {

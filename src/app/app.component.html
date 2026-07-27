@@ -1,8 +1,11 @@
 <!-- Navigation -->
-<div class="navbar bg-base-100 shadow-lg sticky top-0 z-50">
+<div class="navbar sticky top-0 z-50 border-b border-base-300 bg-base-100/80 backdrop-blur">
   <div class="navbar-start">
-    <a routerLink="/" class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-      Angular 22
+    <a routerLink="/" class="flex items-center gap-2 text-lg font-semibold tracking-tight">
+      <span class="text-primary">
+        <app-angular-logo [size]="26" />
+      </span>
+      <span class="text-brand-gradient">Angular 22</span>
     </a>
   </div>
   <div class="navbar-end gap-2">

@@ -1,43 +1,127 @@
 @use 'tailwindcss';
-@plugin "daisyui";
-
-/* Custom theme configurations */
-@theme {
-	/* Increase base font weight for better readability */
-	--font-weight-normal: 450;
-	--font-weight-medium: 550;
-	--font-weight-semibold: 650;
+@plugin "daisyui" {
+	themes: false;
 }
 
-/* Light mode improvements for better contrast and readability */
-[data-theme="light"] {
+/*
+ * Temas propios en lugar de los que trae DaisyUI por defecto.
+ *
+ * La paleta es deliberadamente contenida: un único color de marca (violeta) con
+ * `secondary` reservado para acentos puntuales. Los colores semánticos
+ * (success / warning / error / info) se usan solo para estado, nunca como
+ * decoración, de modo que cuando aparecen signifiquen algo.
+ */
+
+@plugin "daisyui/theme" {
+	name: 'light';
+	default: true;
+	prefersdark: false;
 	color-scheme: light;
 
-	/* Base backgrounds - proper light theme with good contrast */
-	--b1: 100% 0 0; /* Pure white background */
-	--b2: 96% 0.01 250; /* Light gray for sections */
-	--b3: 92% 0.015 250; /* Medium gray for cards */
+	--color-base-100: oklch(100% 0 0);
+	--color-base-200: oklch(97.5% 0.004 300);
+	--color-base-300: oklch(93.5% 0.008 300);
+	--color-base-content: oklch(24% 0.022 300);
 
-	/* Text color - much darker for excellent readability */
-	--bc: 25% 0.015 250; /* Very dark gray, almost black */
+	--color-primary: oklch(50% 0.23 300);
+	--color-primary-content: oklch(99% 0 0);
+	--color-secondary: oklch(56% 0.22 8);
+	--color-secondary-content: oklch(99% 0 0);
+	--color-accent: oklch(58% 0.13 215);
+	--color-accent-content: oklch(99% 0 0);
 
-	/* Primary colors - adjusted for light backgrounds */
-	--p: 52% 0.22 328; /* Vibrant pink-magenta */
-	--pc: 100% 0 0; /* White text on primary */
+	--color-neutral: oklch(28% 0.02 300);
+	--color-neutral-content: oklch(98% 0 0);
 
-	--s: 62% 0.25 266; /* Vibrant purple */
-	--sc: 100% 0 0; /* White text on secondary */
+	--color-info: oklch(58% 0.13 230);
+	--color-info-content: oklch(99% 0 0);
+	--color-success: oklch(54% 0.14 155);
+	--color-success-content: oklch(99% 0 0);
+	--color-warning: oklch(68% 0.15 75);
+	--color-warning-content: oklch(20% 0.02 75);
+	--color-error: oklch(55% 0.2 25);
+	--color-error-content: oklch(99% 0 0);
 
-	--a: 62% 0.2 237; /* Vibrant blue */
-	--ac: 100% 0 0; /* White text on accent */
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 0.875rem;
+	--border: 1px;
+	--depth: 0;
+	--noise: 0;
+}
 
-	/* Neutral color for better contrast */
-	--n: 30% 0.02 250; /* Dark neutral */
-	--nc: 100% 0 0; /* White text on neutral */
+@plugin "daisyui/theme" {
+	name: 'dark';
+	prefersdark: true;
+	color-scheme: dark;
 
-	/* State colors */
-	--su: 65% 0.2 145; /* Green for success */
-	--wa: 75% 0.15 85; /* Yellow for warning */
-	--er: 60% 0.22 25; /* Red for error */
-	--in: 65% 0.18 230; /* Blue for info */
+	--color-base-100: oklch(21% 0.017 300);
+	--color-base-200: oklch(17.5% 0.016 300);
+	--color-base-300: oklch(26% 0.019 300);
+	--color-base-content: oklch(92% 0.008 300);
+
+	--color-primary: oklch(70% 0.19 300);
+	--color-primary-content: oklch(17% 0.02 300);
+	--color-secondary: oklch(70% 0.18 8);
+	--color-secondary-content: oklch(17% 0.02 8);
+	--color-accent: oklch(72% 0.12 215);
+	--color-accent-content: oklch(17% 0.02 215);
+
+	--color-neutral: oklch(30% 0.02 300);
+	--color-neutral-content: oklch(94% 0.008 300);
+
+	--color-info: oklch(72% 0.12 230);
+	--color-info-content: oklch(17% 0.02 230);
+	--color-success: oklch(72% 0.15 155);
+	--color-success-content: oklch(17% 0.02 155);
+	--color-warning: oklch(80% 0.14 75);
+	--color-warning-content: oklch(20% 0.02 75);
+	--color-error: oklch(70% 0.17 25);
+	--color-error-content: oklch(17% 0.02 25);
+
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 0.875rem;
+	--border: 1px;
+	--depth: 0;
+	--noise: 0;
+}
+
+@theme {
+	--text-balance: balance;
+}
+
+/* Los títulos se equilibran solos en lugar de dejar una palabra huérfana. */
+h1,
+h2,
+h3 {
+	text-wrap: balance;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+/* El gradiente de marca, tomado de la identidad de Angular. */
+.text-brand-gradient {
+	background-image: linear-gradient(
+		100deg,
+		var(--color-secondary),
+		var(--color-primary)
+	);
+	background-clip: text;
+	color: transparent;
+	/* Evita que los descendentes se recorten al aplicar background-clip. */
+	padding-block-end: 0.08em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
 }
