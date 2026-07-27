@@ -37,11 +37,18 @@ describe('AuthStore', () => {
 	});
 
 	/**
-	 * El store dispara `fetchCsrfToken` y `checkAuth` en `onInit`, así que hay que
-	 * resolver ambas peticiones antes de poder ejercitar cualquier otra cosa.
+	 * Reproduce lo que hace `provideAppInitializer`: construir el store y lanzar
+	 * el arranque de sesión.
+	 *
+	 * No se hace en `withHooks({ onInit })` porque hacer HTTP durante la
+	 * construcción del store choca con `authInterceptor`, que inyecta ese mismo
+	 * store, y Angular aborta con NG0200.
 	 */
 	const initStore = (session: User | null = null) => {
 		const store = TestBed.inject(AuthStore);
+
+		store.fetchCsrfToken();
+		store.checkAuth();
 
 		httpMock
 			.expectOne(`${environment.apiUrl}/auth/csrf`)
@@ -192,6 +199,8 @@ describe('AuthStore', () => {
 
 	it('guarda el error si no se puede obtener el token CSRF', () => {
 		const store = TestBed.inject(AuthStore);
+		store.fetchCsrfToken();
+		store.checkAuth();
 
 		httpMock
 			.expectOne(`${environment.apiUrl}/auth/csrf`)
@@ -207,6 +216,8 @@ describe('AuthStore', () => {
 		// mensaje que hubiera dejado `fetchCsrfToken`. Se fija la conducta actual
 		// para que un cambio futuro en ese handler sea deliberado.
 		const store = TestBed.inject(AuthStore);
+		store.fetchCsrfToken();
+		store.checkAuth();
 
 		httpMock
 			.expectOne(`${environment.apiUrl}/auth/csrf`)

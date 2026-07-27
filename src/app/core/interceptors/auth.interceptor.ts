@@ -3,6 +3,22 @@ import { inject } from '@angular/core';
 import { AuthStore } from '@core/stores/auth.store';
 import { catchError, throwError } from 'rxjs';
 
+/**
+ * Endpoints donde un 401 es una respuesta de negocio y no una sesión caducada:
+ * credenciales incorrectas en `login`, o simplemente «aún no hay sesión» en la
+ * comprobación de arranque. El store ya trata esas respuestas, y encadenar un
+ * `logout()` encima borraba el mensaje de error recién escrito.
+ */
+const AUTH_ENDPOINTS = [
+	'/auth/login',
+	'/auth/me',
+	'/auth/csrf',
+	'/auth/logout',
+];
+
+const isAuthEndpoint = (url: string) =>
+	AUTH_ENDPOINTS.some(endpoint => url.includes(endpoint));
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 	const authStore = inject(AuthStore);
 
@@ -25,8 +41,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
 	return next(newReq).pipe(
 		catchError((error: HttpErrorResponse) => {
-			// Si recibimos 401, la sesión expiró
-			if (error.status === 401) {
+			// Un 401 fuera de los endpoints de autenticación sí significa que la
+			// sesión expiró.
+			if (error.status === 401 && !isAuthEndpoint(req.url)) {
 				authStore.logout();
 			}
 

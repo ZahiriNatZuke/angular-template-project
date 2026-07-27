@@ -28,15 +28,32 @@ absorb by copying files across.
   The auth flows run against intercepted API responses, so the session paths are
   exercisable without standing up a backend.
 
+### Fixed (session handling)
+
+- **Startup session validation never ran.** `AuthStore` fired `fetchCsrfToken()` and
+  `checkAuth()` from `withHooks({ onInit })`. Those requests pass through
+  `authInterceptor`, which injects `AuthStore` — the very store still under construction.
+  Angular threw `NG0200: Circular dependency detected for SignalStore` and the requests
+  never left the browser. The feature the README advertised as "automatic session
+  validation on application startup" had therefore never worked. Both calls moved to
+  `provideAppInitializer`, where the store is fully built.
+- **A rejected login showed no error.** The interceptor treated *every* 401 as an expired
+  session and called `logout()`, which reset state and wiped the message `login` had just
+  set. It now skips the auth endpoints, where a 401 is a business answer rather than an
+  expired session.
+- **Loading a protected route directly bounced an authenticated user to the login page.**
+  `authGuard` was evaluated before `checkAuth()` resolved. Both guards now wait on a new
+  `isSessionChecked` flag before deciding.
+
 ### Known issues
 
-The end-to-end suite surfaced two defects in session handling, marked `test.fixme` until
-they are fixed:
-
-- A rejected login shows no error. The interceptor treats **every** 401 as an expired
-  session and calls `logout()`, which resets state and wipes the message `login` just set.
-- Loading a protected route directly bounces an authenticated user to the login page:
-  `authGuard` is evaluated before `checkAuth()` has resolved.
+- In a browser, the login `POST` goes out without the `X-CSRF-Token` header even after
+  `/auth/csrf` has answered — the token does not reach the store. The interceptor's own
+  logic is covered by unit tests; what remains to determine is whether the fault is in the
+  application or in how the end-to-end suite simulates CORS for a credentialed
+  cross-origin request. Tracked by a `test.fixme` in `e2e/auth.e2e.spec.ts`. If it is the
+  former, the first mutation of each session would be rejected by a backend that validates
+  CSRF.
 
 ### Fixed
 

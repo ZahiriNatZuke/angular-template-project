@@ -7,7 +7,6 @@ import {
 	patchState,
 	signalStore,
 	withComputed,
-	withHooks,
 	withMethods,
 	withState,
 } from '@ngrx/signals';
@@ -30,6 +29,14 @@ interface AuthState {
 	isLoading: boolean;
 	error: string | null;
 	csrfToken: string | null;
+	/**
+	 * Si la validación de sesión del arranque ya terminó, con o sin éxito.
+	 *
+	 * Los guards lo necesitan: sin esperar a que sea `true`, se evalúan mientras
+	 * `checkAuth()` sigue en vuelo, ven `isAuthenticated()` en falso y expulsan a
+	 * un usuario con sesión válida.
+	 */
+	isSessionChecked: boolean;
 }
 
 // Initial State
@@ -39,6 +46,7 @@ const initialState: AuthState = {
 	isLoading: false,
 	error: null,
 	csrfToken: null,
+	isSessionChecked: false,
 };
 
 export const AuthStore = signalStore(
@@ -119,12 +127,18 @@ export const AuthStore = signalStore(
 					http.post(`${environment.apiUrl}/auth/logout`, {}).pipe(
 						tapResponse({
 							next: () => {
-								patchState(store, initialState);
+								patchState(store, {
+									...initialState,
+									isSessionChecked: true,
+								});
 								router.navigate(['/auth/login']);
 							},
 							error: () => {
 								// Even on error, clear local state
-								patchState(store, initialState);
+								patchState(store, {
+									...initialState,
+									isSessionChecked: true,
+								});
 								router.navigate(['/auth/login']);
 							},
 						})
@@ -145,12 +159,14 @@ export const AuthStore = signalStore(
 									user,
 									isAuthenticated: true,
 									isLoading: false,
+									isSessionChecked: true,
 								});
 							},
 							error: () => {
 								patchState(store, {
 									...initialState,
 									isLoading: false,
+									isSessionChecked: true,
 								});
 							},
 						})
@@ -178,13 +194,19 @@ export const AuthStore = signalStore(
 
 		// Clear error
 		clearError: () => patchState(store, { error: null }),
-	})),
-
-	withHooks({
-		onInit(store) {
-			// On store init, fetch CSRF and check auth
-			store.fetchCsrfToken();
-			store.checkAuth();
-		},
-	})
+	}))
 );
+
+/*
+ * El arranque de sesión NO va en `withHooks({ onInit })`.
+ *
+ * Hacer HTTP durante la construcción del store creaba una dependencia circular:
+ * la petición pasa por `authInterceptor`, que hace `inject(AuthStore)` sobre el
+ * store que todavía se está construyendo. Angular lanzaba
+ * «NG0200: Circular dependency detected for SignalStore» y la petición nunca
+ * salía, así que ni la validación de sesión ni la obtención del token CSRF
+ * llegaban a ejecutarse jamás.
+ *
+ * Se dispara desde `provideAppInitializer` en `app.config.ts`, cuando el store
+ * ya está completamente construido.
+ */
