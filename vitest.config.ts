@@ -39,10 +39,10 @@ export default defineConfig({
 			// son caminos de SSR (`isPlatformBrowser` en falso), inalcanzables
 			// bajo jsdom.
 			thresholds: {
-				lines: 90,
-				functions: 90,
-				statements: 90,
-				branches: 70,
+				lines: 95,
+				functions: 92,
+				statements: 95,
+				branches: 78,
 			},
 		},
 	},

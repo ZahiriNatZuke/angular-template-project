@@ -70,8 +70,14 @@ export class RouterStateService {
 
 		const newState: RouterStateSnapshot = {
 			url: this.#router.url,
-			params: this.#mergeRouteParams(root, route => route.params),
-			queryParams: this.#mergeRouteParams(root, route => route.queryParams),
+			// Se leen del `snapshot`: `route.params` y `route.queryParams` son
+			// Observables, y esparcirlos copiaba las propiedades internas del
+			// Subject (`_value`, `closed`, `observers`…) en lugar de los valores.
+			params: this.#mergeRouteParams(root, route => route.snapshot.params),
+			queryParams: this.#mergeRouteParams(
+				root,
+				route => route.snapshot.queryParams
+			),
 			data: this.#mergeRouteData(root),
 		};
 
