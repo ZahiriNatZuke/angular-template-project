@@ -1,13 +1,12 @@
 import { Routes } from '@angular/router';
-import { AppComponent } from '@app/app.component';
 
 export const routes: Routes = [
 	{
 		path: '',
-		component: AppComponent,
-		data: {
-			title: 'routes.home.title',
-			description: 'routes.home.description',
-		},
+		loadChildren: () => import('./features/home/home.routes'),
+	},
+	{
+		path: '**',
+		redirectTo: '',
 	},
 ];

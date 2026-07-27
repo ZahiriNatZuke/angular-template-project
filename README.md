@@ -70,7 +70,8 @@ src/
 │   │   │   └── interfaces/      # Shared interfaces (SEO)
 │   │   └── utils/               # Utility functions (cookies, router-seo)
 │   ├── features/                # Feature modules (see structure below)
-│   ├── app.component.ts         # Root component
+│   │   └── home/                # Included example: lazy-loaded landing page
+│   ├── app.component.ts         # Root shell (navbar + router-outlet + footer)
 │   ├── app.config.ts            # Application configuration
 │   └── app.routes.ts            # Application routes
 ├── assets/
@@ -78,6 +79,7 @@ src/
 ├── environments/                # Environment configurations
 │   ├── environment.ts           # Development environment
 │   └── environment.production.ts # Production environment
+├── setup-vitest.ts              # Vitest/TestBed bootstrap (zoneless)
 └── styles.scss                  # Global styles
 ```
 

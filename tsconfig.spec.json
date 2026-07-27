@@ -3,9 +3,8 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./out-tsc/spec",
-		"module": "CommonJs",
 		"typeRoots": ["node_modules/@types"],
-		"types": ["node"]
+		"types": ["node", "vitest/globals"]
 	},
-	"include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+	"include": ["src/setup-vitest.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
 }
