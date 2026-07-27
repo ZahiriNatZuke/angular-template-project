@@ -1,0 +1,11 @@
+/* Playwright transpila por su cuenta; este tsconfig existe para el editor. */
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"outDir": "../out-tsc/e2e",
+		"types": ["node"],
+		"module": "ESNext",
+		"moduleResolution": "bundler"
+	},
+	"include": ["**/*.ts"]
+}

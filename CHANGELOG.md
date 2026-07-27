@@ -24,6 +24,19 @@ absorb by copying files across.
 - **Coverage thresholds** enforced in CI, so coverage cannot silently regress.
 - Tests for the two `safe-*` pipes, `SeoService`, `RouterStateService`, `NotifyService`,
   and the login, dashboard and home pages. The suite goes from 46 to 91 tests.
+- **End-to-end tests** with Playwright, on desktop and mobile viewports, plus a CI job.
+  The auth flows run against intercepted API responses, so the session paths are
+  exercisable without standing up a backend.
+
+### Known issues
+
+The end-to-end suite surfaced two defects in session handling, marked `test.fixme` until
+they are fixed:
+
+- A rejected login shows no error. The interceptor treats **every** 401 as an expired
+  session and calls `logout()`, which resets state and wipes the message `login` just set.
+- Loading a protected route directly bounces an authenticated user to the login page:
+  `authGuard` is evaluated before `checkAuth()` has resolved.
 
 ### Fixed
 

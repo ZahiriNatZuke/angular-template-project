@@ -46,3 +46,9 @@ package-lock.json
 # Local Codex configuration
 .codex/
 AGENTS.md
+
+# Playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
