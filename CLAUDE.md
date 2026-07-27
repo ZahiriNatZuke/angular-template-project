@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Angular 21 standalone template project using **zoneless change detection** (default), **NgRx SignalStore** for state management, **TailwindCSS v4** with DaisyUI, internationalization (i18n), theming capabilities, and **ultra-secure authentication** via HttpOnly cookies.
+Angular 22 standalone template project using **zoneless change detection** (default), **NgRx SignalStore** for state management, **TailwindCSS v4** with DaisyUI, internationalization (i18n), theming capabilities, and **ultra-secure authentication** via HttpOnly cookies.
 
 This is a **production-ready template** designed for building scalable Angular applications with modern best practices, security-first authentication, and optimal performance.
 
@@ -273,7 +273,7 @@ Environment variables include:
 
 ### Application Bootstrap
 
-**Zoneless change detection** enabled by default in Angular 21.
+**Zoneless change detection** enabled by default in Angular 22.
 
 Router features enabled:
 - Component input binding
@@ -475,10 +475,10 @@ This project uses **pnpm**. Always use `pnpm` commands, not `npm` or `yarn`.
 
 ## Migration Notes
 
-This project represents the modern Angular 21 architecture:
+This project represents the modern Angular 22 architecture:
 
 ### Key Architectural Decisions:
-1. **Zoneless change detection** - Default in Angular 21
+1. **Zoneless change detection** - Default in Angular 22
 2. **SignalStore over services** - Modern state management
 3. **HttpOnly cookies** - XSS protection for auth
 4. **No barrel files** - Better tree-shaking

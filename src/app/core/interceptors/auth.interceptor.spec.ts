@@ -63,18 +63,16 @@ describe('authInterceptor', () => {
 		request.flush({});
 	});
 
-	it.each([
-		'POST',
-		'PUT',
-		'PATCH',
-		'DELETE',
-	])('adjunta el token CSRF en %s', method => {
-		http.request(method, URL, { body: {} }).subscribe();
+	it.each(['POST', 'PUT', 'PATCH', 'DELETE'])(
+		'adjunta el token CSRF en %s',
+		method => {
+			http.request(method, URL, { body: {} }).subscribe();
 
-		const request = httpMock.expectOne(URL);
-		expect(request.request.headers.get('X-CSRF-Token')).toBe('csrf-123');
-		request.flush({});
-	});
+			const request = httpMock.expectOne(URL);
+			expect(request.request.headers.get('X-CSRF-Token')).toBe('csrf-123');
+			request.flush({});
+		}
+	);
 
 	it('omite la cabecera CSRF si todavía no hay token', () => {
 		authStoreMock.csrfToken.set(null);

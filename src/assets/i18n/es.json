@@ -1,15 +1,15 @@
 {
 	"routes": {
 		"home": {
-			"title": "Plantilla Angular 21 - Moderna y Segura",
-			"description": "Plantilla Angular 21 lista para producción con detección de cambios sin zonas, NgRx SignalStore, autenticación ultra-segura, TailwindCSS v4 y mejores prácticas."
+			"title": "Plantilla Angular 22 - Moderna y Segura",
+			"description": "Plantilla Angular 22 lista para producción con detección de cambios sin zonas, NgRx SignalStore, autenticación ultra-segura, TailwindCSS v4 y mejores prácticas."
 		},
 		"login": {
-			"title": "Iniciar sesión - Plantilla Angular 21",
+			"title": "Iniciar sesión - Plantilla Angular 22",
 			"description": "Inicia sesión con autenticación basada en cookies HttpOnly y protección CSRF."
 		},
 		"dashboard": {
-			"title": "Panel - Plantilla Angular 21",
+			"title": "Panel - Plantilla Angular 22",
 			"description": "Área protegida, disponible solo para usuarios autenticados."
 		}
 	},
@@ -58,9 +58,9 @@
 	},
 	"home": {
 		"hero": {
-			"title": "Plantilla Angular 21",
+			"title": "Plantilla Angular 22",
 			"subtitle": "Moderna y Lista para Producción",
-			"description": "Una plantilla Angular 21 completa con características de nivel empresarial, autenticación con seguridad prioritaria y optimizaciones de rendimiento integradas.",
+			"description": "Una plantilla Angular 22 completa con características de nivel empresarial, autenticación con seguridad prioritaria y optimizaciones de rendimiento integradas.",
 			"cta": {
 				"clone": "Clonar Repositorio",
 				"docs": "Ver Documentación"
@@ -69,7 +69,7 @@
 		"features": {
 			"title": "Qué Incluye",
 			"angular": {
-				"title": "Angular 21",
+				"title": "Angular 22",
 				"description": "Componentes standalone con detección de cambios sin zonas para rendimiento óptimo"
 			},
 			"auth": {
