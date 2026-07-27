@@ -17,6 +17,7 @@ Everything described below is wired up and covered by tests — the template run
 | `/` | Lazy-loaded landing page with the custom light/dark themes |
 | `/auth/login` | Reactive-forms login guarded by `anonymousGuard`, driven by `AuthStore` |
 | `/dashboard` | Protected route behind `authGuard`, redirecting with a `returnUrl` |
+| anything else | A real 404 page that keeps the attempted URL and marks itself `noindex` |
 
 Plus **42 tests** over the three stores, the CSRF interceptor and both guards, and a
 **GitHub Actions workflow** running lint, tests (Node 22 and 24) and a production build.
@@ -399,6 +400,18 @@ Routes are defined in `app.routes.ts` with SEO metadata:
 ```
 
 SEO tags are automatically updated on route changes and wait for translations to load.
+
+### The 404 route
+
+The wildcard route renders `features/not-found` instead of redirecting to `/`, so a broken
+link is visible rather than silently swallowed. The page keeps the attempted URL in the
+address bar and displays it.
+
+Because this is a SPA, the server still answers **HTTP 200** for that URL — the 404 only
+exists client-side. The page therefore sets `<meta name="robots" content="noindex, follow">`
+so crawlers don't index it as real content, and removes the tag on destroy so the directive
+doesn't leak into the next navigation. If you need a true 404 status, your host has to
+return it before Angular boots.
 
 ## Styling
 

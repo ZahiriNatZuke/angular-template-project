@@ -23,6 +23,16 @@ export class SeoService {
 		this.#meta.updateTag(tag);
 	}
 
+	/**
+	 * Elimina una etiqueta meta por selector, por ejemplo `name="robots"`.
+	 *
+	 * Necesario para las etiquetas que solo aplican a una ruta: sin esto, un
+	 * `noindex` puesto en una página se quedaría activo el resto de la sesión.
+	 */
+	removeTag(selector: string) {
+		this.#meta.removeTag(selector);
+	}
+
 	setMetaData(seo: Seo) {
 		this.#meta.updateTag({
 			name: 'description',

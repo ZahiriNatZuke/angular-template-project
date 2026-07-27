@@ -11,11 +11,21 @@
 		"dashboard": {
 			"title": "Panel - Plantilla Angular 22",
 			"description": "Área protegida, disponible solo para usuarios autenticados."
+		},
+		"notFound": {
+			"title": "Página no encontrada - Plantilla Angular 22",
+			"description": "La página que buscabas no existe."
 		}
 	},
 	"nav": {
 		"login": "Iniciar sesión",
 		"dashboard": "Panel"
+	},
+	"notFound": {
+		"title": "Esta página no existe",
+		"description": "Puede que el enlace esté desactualizado o que la dirección tenga una errata. No has roto nada.",
+		"home": "Volver al inicio",
+		"back": "Volver atrás"
 	},
 	"auth": {
 		"login": {
