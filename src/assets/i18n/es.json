@@ -59,89 +59,100 @@
 	"home": {
 		"hero": {
 			"title": "Plantilla Angular 22",
-			"subtitle": "Moderna y Lista para Producción",
-			"description": "Una plantilla Angular 22 completa con características de nivel empresarial, autenticación con seguridad prioritaria y optimizaciones de rendimiento integradas.",
+			"badge": {
+				"zoneless": "Sin zonas"
+			},
+			"description": "Un punto de partida listo para producción: estado con signals, autenticación que sobrevive a un XSS, y una suite de tests y un CI que ya funcionan.",
+			"copy": "Copiar",
+			"copied": "Copiado",
 			"cta": {
-				"clone": "Clonar Repositorio",
-				"docs": "Ver Documentación"
+				"clone": "Clonar repositorio",
+				"docs": "Ver documentación"
+			}
+		},
+		"state": {
+			"eyebrow": "Gestión de estado",
+			"title": "Estado sin ceremonia",
+			"description": "NgRx SignalStore sustituye acciones, reducers y effects por un único store declarativo. Sin servicios que guardan signals privadas ni suscripciones que limpiar.",
+			"points": [
+				"Stores provistos en la raíz e inyectados directamente en los componentes",
+				"Los valores computados se derivan solos, sin cableado manual",
+				"patchState mantiene las actualizaciones tipadas de punta a punta",
+				"Detección de cambios sin zonas: Angular reacciona a las signals, no al parcheo de Zone.js"
+			]
+		},
+		"auth": {
+			"eyebrow": "Autenticación",
+			"title": "Tokens que tu JavaScript no puede leer",
+			"description": "La mayoría de plantillas guardan el JWT en localStorage, así que cualquier script inyectado se lleva la sesión. Aquí el token nunca llega a JavaScript.",
+			"table": {
+				"aspect": "Aspecto",
+				"localStorage": "Token en localStorage",
+				"httpOnly": "Cookie HttpOnly"
+			},
+			"rows": {
+				"storage": {
+					"aspect": "Dónde vive el token",
+					"localStorage": "En el almacén del navegador, legible por cualquier script",
+					"httpOnly": "En una cookie que el navegador se niega a exponer a JavaScript"
+				},
+				"xss": {
+					"aspect": "Ante un XSS",
+					"localStorage": "La sesión se roba en una sola línea",
+					"httpOnly": "El script no puede leer la cookie"
+				},
+				"csrf": {
+					"aspect": "Protección CSRF",
+					"localStorage": "No hace falta, pero el token queda expuesto",
+					"httpOnly": "Token rotatorio en cada mutación"
+				},
+				"refresh": {
+					"aspect": "Tras recargar",
+					"localStorage": "Rehidratación manual al arrancar",
+					"httpOnly": "La cookie viaja sola y la sesión se valida al iniciar"
+				},
+				"setup": {
+					"aspect": "Trabajo en el backend",
+					"localStorage": "Devolver el token en el cuerpo de la respuesta",
+					"httpOnly": "Cabeceras Set-Cookie y validación de CSRF"
+				}
 			}
 		},
 		"features": {
-			"title": "Qué Incluye",
+			"title": "Qué incluye",
+			"description": "Cada pieza está conectada y cubierta por tests, no solo enumerada en el README.",
 			"angular": {
 				"title": "Angular 22",
-				"description": "Componentes standalone con detección de cambios sin zonas para rendimiento óptimo"
+				"description": "Componentes standalone con detección de cambios sin zonas por defecto."
 			},
 			"auth": {
-				"title": "Autenticación Ultra-Segura",
-				"description": "Cookies HttpOnly con protección CSRF, inmune a ataques XSS"
+				"title": "Autenticación segura",
+				"description": "Cookies HttpOnly, CSRF en cada mutación y guards que ya protegen una ruta real."
 			},
 			"state": {
 				"title": "SignalStore",
-				"description": "NgRx SignalStore para gestión de estado reactiva y tipada"
+				"description": "Tres stores globales —sesión, idioma y tema— reactivos y tipados."
 			},
 			"styling": {
 				"title": "TailwindCSS v4",
-				"description": "Estilos modernos con biblioteca de componentes DaisyUI"
+				"description": "DaisyUI con temas claro y oscuro propios y una paleta deliberadamente contenida."
 			},
 			"i18n": {
 				"title": "Internacionalización",
-				"description": "i18n integrado con ngx-translate y cambio de idioma reactivo"
+				"description": "Inglés y español con cambio reactivo y SEO que espera a las traducciones."
 			},
 			"testing": {
-				"title": "Vitest",
-				"description": "Pruebas unitarias rápidas con herramientas modernas"
+				"title": "Vitest y CI",
+				"description": "42 tests sobre stores, interceptor y guards, ejecutándose en Node 22 y 24."
 			}
 		},
-		"techStack": {
-			"title": "Stack Tecnológico",
-			"frontend": "Frontend",
-			"state": "Gestión de Estado",
-			"styling": "Estilos",
-			"testing": "Pruebas",
-			"tooling": "Herramientas"
-		},
-		"practices": {
-			"title": "Mejores Prácticas",
-			"security": {
-				"title": "Seguridad Primero",
-				"items": [
-					"Cookies HttpOnly para autenticación",
-					"Protección CSRF en mutaciones",
-					"Sin datos sensibles en localStorage",
-					"Pipes seguros contra XSS",
-					"Validación automática de sesión"
-				]
-			},
-			"performance": {
-				"title": "Rendimiento",
-				"items": [
-					"Detección de cambios sin zonas",
-					"Reactividad basada en signals",
-					"Sin barrel files (mejor tree-shaking)",
-					"Preparado para lazy loading",
-					"Optimización con Fetch API"
-				]
-			},
-			"architecture": {
-				"title": "Arquitectura",
-				"items": [
-					"Estructura feature-first",
-					"Componentes standalone",
-					"Patrones SignalStore",
-					"Programación reactiva",
-					"Clara separación de responsabilidades"
-				]
-			},
-			"dx": {
-				"title": "Experiencia del Desarrollador",
-				"items": [
-					"Pruebas rápidas con Vitest",
-					"Biome para linting/formateo",
-					"Hooks pre-commit",
-					"Alias de rutas",
-					"Enrutamiento tipado"
-				]
+		"stack": {
+			"title": "Stack tecnológico",
+			"groups": {
+				"framework": "Framework",
+				"state": "Estado e i18n",
+				"styling": "Estilos",
+				"tooling": "Herramientas"
 			}
 		},
 		"footer": {

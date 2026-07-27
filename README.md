@@ -8,14 +8,28 @@ A modern, production-ready Angular 22 template with best practices, security-fir
 
 This template provides a solid foundation for building scalable Angular applications with enterprise-grade features including zoneless change detection, signal-based state management, ultra-secure authentication, and internationalization support.
 
+Everything described below is wired up and covered by tests — the template runs, builds and passes CI as-is.
+
+## What you get out of the box
+
+| Route | What it demonstrates |
+|---|---|
+| `/` | Lazy-loaded landing page with the custom light/dark themes |
+| `/auth/login` | Reactive-forms login guarded by `anonymousGuard`, driven by `AuthStore` |
+| `/dashboard` | Protected route behind `authGuard`, redirecting with a `returnUrl` |
+
+Plus **42 tests** over the three stores, the CSRF interceptor and both guards, and a
+**GitHub Actions workflow** running lint, tests (Node 22 and 24) and a production build.
+
 ## Key Features
 
 ### Modern Angular Stack
 - **Angular 22** with standalone components (no modules)
+- **TypeScript 6** in strict mode
 - **Zoneless change detection** for optimal performance
 - **Signal-based reactivity** throughout the application
 - **NgRx SignalStore** for state management
-- **TailwindCSS v4** with DaisyUI components
+- **TailwindCSS v4** with DaisyUI and **Lucide** icons
 - **Vitest** for fast unit testing
 
 ### Ultra-Secure Authentication
@@ -38,10 +52,10 @@ This template provides a solid foundation for building scalable Angular applicat
 - Translation files in `src/assets/i18n/*.json`
 
 ### Theming
-- Light/Dark mode with system preference detection
-- Cookie-based theme persistence
-- TailwindCSS v4 integration
-- DaisyUI component library
+- Custom light and dark themes defined in `src/styles.scss`, not DaisyUI's defaults
+- A deliberately contained palette: one brand colour, with semantic colours reserved for state
+- System preference detection with cookie-based persistence
+- Applied through the `data-theme` attribute, so every DaisyUI component follows along
 
 ### SEO Optimization
 - Reactive SEO service with automatic meta tag updates
@@ -93,7 +107,7 @@ This template follows a **feature-first architecture**, where each feature is or
 
 ```
 app/features/
-├── authentication/              # Example: Authentication feature
+├── auth/                        # Included in the template
 │   ├── components/              # Feature-specific components
 │   │   ├── login-form/
 │   │   └── register-form/
@@ -109,7 +123,7 @@ app/features/
 │   │   └── enums/               # Feature enums
 │   ├── guards/                  # Feature-specific guards
 │   ├── utils/                   # Feature-specific utilities
-│   └── authentication.routes.ts # Feature routes
+│   └── auth.routes.ts           # Feature routes
 │
 └── products/                    # Example: Products feature
     ├── components/
@@ -143,11 +157,17 @@ Features should be lazy-loaded for optimal performance:
 export const routes: Routes = [
   {
     path: 'auth',
-    loadChildren: () => import('./features/authentication/authentication.routes')
+    loadChildren: () => import('./features/auth/auth.routes')
   },
   {
     path: 'products',
     loadChildren: () => import('./features/products/products.routes')
+  },
+  // The empty path goes last: with `loadChildren` it matches by prefix and
+  // would otherwise swallow every URL.
+  {
+    path: '',
+    loadChildren: () => import('./features/home/home.routes')
   }
 ];
 ```
@@ -230,6 +250,11 @@ pnpm test:ui
 # Generate coverage report
 pnpm test:coverage
 ```
+
+The suite covers the three SignalStores, the CSRF interceptor and both guards —
+100% of lines and functions over the exercised code. `src/setup-vitest.ts` boots the
+TestBed in zoneless mode, which is required here: the project has no `zone.js`
+dependency at all.
 
 ### Code Quality
 
@@ -377,14 +402,49 @@ SEO tags are automatically updated on route changes and wait for translations to
 
 ## Styling
 
-### TailwindCSS v4
+### TailwindCSS v4 and DaisyUI
 
 Use Tailwind utility classes throughout the application:
 
 ```html
 <button class="btn btn-primary">Click me</button>
-<div class="card bg-base-100 shadow-xl">...</div>
+<div class="card border border-base-300 bg-base-100">...</div>
 ```
+
+### Custom themes
+
+The light and dark themes are defined in `src/styles.scss` with `@plugin "daisyui/theme"`,
+replacing DaisyUI's built-in ones. To rebrand the template, change the colour tokens there
+and every component follows:
+
+```css
+@plugin "daisyui/theme" {
+  name: 'light';
+  --color-primary: oklch(50% 0.23 300);
+  --color-base-100: oklch(100% 0 0);
+  /* … */
+}
+```
+
+> **Note:** DaisyUI v5 renamed its theme variables. If you find older snippets using
+> `--p`, `--b1` or `--bc`, they are v4 syntax and will be silently ignored.
+
+### Icons
+
+Icons come from `@lucide/angular`. Each icon is a standalone component with an attribute
+selector, so you only bundle the ones you import:
+
+```typescript
+import { LucideShieldCheck } from '@lucide/angular';
+
+@Component({ imports: [LucideShieldCheck], /* … */ })
+```
+
+```html
+<svg lucideShieldCheck class="size-5"></svg>
+```
+
+For icons chosen at runtime, import `LucideDynamicIcon` and bind `[lucideIcon]`.
 
 ### Dark Mode
 
@@ -434,6 +494,18 @@ this.themeStore.setTheme(Themes.Dark);
 - ✅ Auto-reload on file changes
 - ✅ Comprehensive error handling
 - ✅ Clear documentation
+- ✅ CI on every pull request
+
+## Notes and known limitations
+
+- **NgRx has no Angular 22 release yet.** `@ngrx/signals` still declares a peer on
+  `@angular/core: ^21.0.0`, so installing prints a peer warning. The stores work — the
+  test suite exercises all three — but the warning stays until NgRx ships v22.
+- **`@angular-devkit/build-angular` is still pulled in transitively.** The project uses
+  `@angular/build`, but Analog declares the webpack builder as an optional peer and pnpm
+  auto-installs it. Harmless, just extra install weight.
+- **Icon packages are optional.** `lucide` and `@lucide/angular` power the landing page's
+  icons; drop them if you bring your own icon set.
 
 ## Additional Resources
 
