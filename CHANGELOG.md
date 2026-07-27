@@ -15,6 +15,13 @@ absorb by copying files across.
   footer, but the licence text itself was missing — so GitHub showed no licence at all.
 - `CONTRIBUTING.md`, `CODEOWNERS`, and pull request and issue templates.
 - This changelog.
+- **Dependabot**, with updates grouped by ecosystem so an Angular bump arrives as one
+  coherent pull request rather than a dozen that fail CI individually. TypeScript is
+  pinned below 6.1, which is what Angular 22 declares as its peer.
+- **Scheduled CI** every Monday. A template can break with no commit at all — an action
+  changes, a runner updates Node, a package is unpublished — and the weekly run catches it
+  before the next person to clone it does.
+- **Coverage thresholds** enforced in CI, so coverage cannot silently regress.
 
 ## [2.0.0]
 

@@ -284,6 +284,22 @@ pnpm lint:ci
 Concurrent runs on the same branch cancel the previous one, so a burst of pushes
 only pays for the last commit.
 
+It also runs **every Monday on a schedule**. A template can break without a single commit —
+an action changes, a runner bumps Node, a package is unpublished — and the weekly run
+surfaces that before the next person to clone the repo does.
+
+### Quality gates
+
+- **Coverage thresholds** (`vitest.config.ts`): the test job runs `pnpm test:coverage`, so
+  coverage cannot silently regress. The thresholds measure the files the tests import, not
+  all of `src/` — they prevent decay of what is covered, they do not claim full coverage.
+- **Bundle budgets** (`angular.json`): the initial bundle warns at 420 kB and fails at
+  500 kB. The current build sits around 368 kB.
+- **Dependabot** (`.github/dependabot.yml`): weekly, grouped by ecosystem so an Angular
+  bump arrives as one coherent pull request instead of a dozen that fail CI on their own.
+  TypeScript is held below 6.1 — Angular 22 declares `typescript: ">=6.0 <6.1"`, and npm's
+  `latest` is already past that.
+
 ## Commands Reference
 
 ### Development
