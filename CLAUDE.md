@@ -22,6 +22,7 @@ This is a **production-ready template** designed for building scalable Angular a
 
 ### Code Quality
 - `pnpm lint` - Run Biome linter with auto-fix (includes unsafe fixes)
+- `pnpm lint:ci` - Run Biome check without writing files (used by CI)
 - `pnpm format` - Run Biome formatter with auto-fix
 - `pnpm precommit` - Run both lint and format (used by husky pre-commit hook)
 

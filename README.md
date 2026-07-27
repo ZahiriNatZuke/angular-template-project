@@ -1,5 +1,7 @@
 # Angular Template Project
 
+[![CI](https://github.com/ZahiriNatZuke/angular-template-project/actions/workflows/ci.yml/badge.svg)](https://github.com/ZahiriNatZuke/angular-template-project/actions/workflows/ci.yml)
+
 A modern, production-ready Angular 21 template with best practices, security-first authentication, and performance optimizations built-in.
 
 ## Overview
@@ -240,7 +242,21 @@ pnpm format
 
 # Run both (pre-commit hook)
 pnpm precommit
+
+# Check without writing (what CI runs)
+pnpm lint:ci
 ```
+
+## Continuous Integration
+
+`.github/workflows/ci.yml` runs on every push to `main` and on every pull request:
+
+- **Lint & format** — `biome ci`, which verifies without rewriting files
+- **Test** — the Vitest suite on Node 22 and Node 24
+- **Production build** — `pnpm build`, uploading `dist/` as an artifact
+
+Concurrent runs on the same branch cancel the previous one, so a burst of pushes
+only pays for the last commit.
 
 ## Commands Reference
 
@@ -256,6 +272,7 @@ pnpm precommit
 
 ### Code Quality
 - `pnpm lint` - Biome linter with auto-fix
+- `pnpm lint:ci` - Biome check without writing (used by CI)
 - `pnpm format` - Biome formatter
 - `pnpm precommit` - Lint + format (husky hook)
 
