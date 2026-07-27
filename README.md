@@ -70,6 +70,8 @@ src/
 │   │   │   └── interfaces/      # Shared interfaces (SEO)
 │   │   └── utils/               # Utility functions (cookies, router-seo)
 │   ├── features/                # Feature modules (see structure below)
+│   │   ├── auth/                # Included example: login page (anonymousGuard)
+│   │   ├── dashboard/           # Included example: protected page (authGuard)
 │   │   └── home/                # Included example: lazy-loaded landing page
 │   ├── app.component.ts         # Root shell (navbar + router-outlet + footer)
 │   ├── app.config.ts            # Application configuration

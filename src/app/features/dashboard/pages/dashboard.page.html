@@ -1,0 +1,48 @@
+<section class="min-h-[calc(100vh-4rem)] py-16 px-4">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-10">
+      <div>
+        <h1 class="text-4xl font-bold">{{ 'dashboard.title' | translate }}</h1>
+        <p class="text-base-content/70 font-medium mt-1">
+          {{ 'dashboard.welcome' | translate }}, {{ authStore.userName() }}
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-outline btn-error" (click)="logout()">
+        {{ 'dashboard.logout' | translate }}
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-base opacity-70">{{ 'dashboard.card.name' | translate }}</h2>
+          <p class="text-xl font-semibold break-words">{{ authStore.userName() }}</p>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-base opacity-70">{{ 'dashboard.card.email' | translate }}</h2>
+          <p class="text-xl font-semibold break-words">{{ authStore.userEmail() }}</p>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-base opacity-70">{{ 'dashboard.card.role' | translate }}</h2>
+          <p class="text-xl font-semibold break-words">{{ authStore.userRole() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl mt-8">
+      <div class="card-body">
+        <h2 class="card-title">{{ 'dashboard.session.title' | translate }}</h2>
+        <p class="text-base-content/80 font-medium leading-relaxed">
+          {{ 'dashboard.session.description' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

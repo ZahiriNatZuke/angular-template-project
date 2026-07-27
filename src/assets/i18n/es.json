@@ -3,6 +3,57 @@
 		"home": {
 			"title": "Plantilla Angular 21 - Moderna y Segura",
 			"description": "Plantilla Angular 21 lista para producción con detección de cambios sin zonas, NgRx SignalStore, autenticación ultra-segura, TailwindCSS v4 y mejores prácticas."
+		},
+		"login": {
+			"title": "Iniciar sesión - Plantilla Angular 21",
+			"description": "Inicia sesión con autenticación basada en cookies HttpOnly y protección CSRF."
+		},
+		"dashboard": {
+			"title": "Panel - Plantilla Angular 21",
+			"description": "Área protegida, disponible solo para usuarios autenticados."
+		}
+	},
+	"nav": {
+		"login": "Iniciar sesión",
+		"dashboard": "Panel"
+	},
+	"auth": {
+		"login": {
+			"title": "Iniciar sesión",
+			"subtitle": "Accede a tu cuenta de forma segura",
+			"email": {
+				"label": "Correo",
+				"placeholder": "tu@ejemplo.com",
+				"required": "El correo es obligatorio",
+				"invalid": "Introduce un correo válido"
+			},
+			"password": {
+				"label": "Contraseña",
+				"placeholder": "Tu contraseña",
+				"required": "La contraseña es obligatoria",
+				"minLength": "La contraseña debe tener al menos 8 caracteres",
+				"toggle": "Mostrar u ocultar la contraseña"
+			},
+			"rememberMe": "Mantener la sesión iniciada",
+			"submit": "Entrar",
+			"dismiss": "Cerrar",
+			"or": "o",
+			"backHome": "Volver al inicio",
+			"note": "Este formulario habla con el backend descrito en docs/BACKEND_AUTH_REQUIREMENTS.md. Los tokens nunca llegan a JavaScript: el servidor responde con cookies HttpOnly y cada mutación lleva un token CSRF."
+		}
+	},
+	"dashboard": {
+		"title": "Panel",
+		"welcome": "Bienvenido",
+		"logout": "Cerrar sesión",
+		"card": {
+			"name": "Nombre",
+			"email": "Correo",
+			"role": "Rol"
+		},
+		"session": {
+			"title": "Sobre esta sesión",
+			"description": "Esta ruta está protegida por authGuard. La sesión vive en cookies HttpOnly, así que sobrevive a una recarga y queda fuera del alcance de cualquier script de la página."
 		}
 	},
 	"home": {

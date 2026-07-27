@@ -6,6 +6,13 @@
     </a>
   </div>
   <div class="navbar-end gap-2">
+    <!-- Auth entry point -->
+    @if (authStore.isAuthenticated()) {
+      <a routerLink="/dashboard" class="btn btn-ghost btn-sm">{{ 'nav.dashboard' | translate }}</a>
+    } @else {
+      <a routerLink="/auth/login" class="btn btn-ghost btn-sm">{{ 'nav.login' | translate }}</a>
+    }
+
     <!-- Theme Toggle -->
     <button class="btn btn-ghost btn-circle" (click)="toggleTheme()" [attr.aria-label]="'Toggle theme'">
       @if (themeStore.isDarkMode()) {
