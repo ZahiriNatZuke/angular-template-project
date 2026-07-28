@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { NotifyService } from '@core/services/notify.service';
 import { AuthStore } from '@core/stores/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -11,7 +12,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class DashboardPage {
 	authStore = inject(AuthStore);
 
+	readonly #notify = inject(NotifyService);
+
 	logout(): void {
 		this.authStore.logout();
+
+		// El aviso sale aquí y no en el store: cerrar sesión lleva al login, y una
+		// pantalla de login sin más contexto no distingue entre «me fui yo» y «me
+		// echaron». El toast sobrevive a la navegación porque Notiflix lo monta
+		// fuera del árbol de la aplicación.
+		this.#notify.info('notify.session.closed');
 	}
 }

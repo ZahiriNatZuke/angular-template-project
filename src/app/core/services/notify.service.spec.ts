@@ -10,6 +10,7 @@ vi.mock('notiflix', () => ({
 		success: vi.fn(),
 		info: vi.fn(),
 		warning: vi.fn(),
+		failure: vi.fn(),
 	},
 	Loading: {
 		dots: vi.fn(),
@@ -58,6 +59,15 @@ describe('NotifyService', () => {
 
 		expect(Notify.warning).toHaveBeenCalledWith(
 			'traducido:algo.raro',
+			expect.any(Object)
+		);
+	});
+
+	it('failure traduce la clave antes de mostrarla', () => {
+		service.failure('algo.fallo');
+
+		expect(Notify.failure).toHaveBeenCalledWith(
+			'traducido:algo.fallo',
 			expect.any(Object)
 		);
 	});
