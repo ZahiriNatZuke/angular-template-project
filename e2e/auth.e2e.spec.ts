@@ -147,18 +147,18 @@ test.describe('Autenticación', () => {
 	}) => {
 		// `NotifyService` carga Notiflix con `import()` para mantenerlo fuera del
 		// bundle inicial —son 14 kB transferidos que la mayoría de las visitas no
-		// necesita—, así que el aviso llega un tick después y sobrevive a la
-		// navegación al login. Eso solo se comprueba en un navegador real.
+		// necesita—, así que el aviso llega un tick después y tiene que sobrevivir a
+		// la navegación al login. Eso solo se comprueba en un navegador real.
+		//
+		// Se espera al texto y no a la respuesta del chunk: cómo se llame el fichero
+		// es cosa del bundler y cambia entre el servidor de desarrollo y el build.
+		// Lo que importa es que el usuario acabe leyendo el aviso.
 		await mockAuthApi(page, { session: USER });
-
-		const notiflixChunk = page.waitForResponse(response =>
-			/notiflix/i.test(response.url())
-		);
 
 		await page.goto('/dashboard');
 		await page.getByRole('button', { name: /sign out|cerrar sesión/i }).click();
 
-		await notiflixChunk;
+		await expect(page).toHaveURL(/\/auth\/login/);
 		await expect(
 			page.getByText(/you signed out|cerraste la sesión/i)
 		).toBeVisible();
