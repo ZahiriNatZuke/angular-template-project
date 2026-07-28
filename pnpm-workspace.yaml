@@ -1,3 +1,22 @@
+# Ajustes de pnpm. Van aquí y no en `.npmrc` porque `auto-install-peers` es una
+# opción de pnpm, y npm avisa por cada invocación de que no la conoce.
+
+# Los peers opcionales no se instalan solos.
+#
+# Sin esto, pnpm resuelve `@angular-devkit/build-angular` —peer *opcional* de
+# Analog— y con él entra la cadena de webpack entera, pese a que este proyecto
+# compila con `@angular/build`. No llegaba a materializarse en `node_modules`,
+# pero sí quedaba resuelto en el lockfile, que es lo que analiza Dependabot: de
+# ahí salía la mayoría de sus alertas de seguridad, sobre dependencias que el
+# proyecto no usa.
+#
+# Efecto medido: el lockfile pasa de 9362 a 5126 líneas y la instalación de 996
+# paquetes a 538, sin un solo aviso de peer faltante.
+#
+# Si algún día hace falta un peer que ya no se instala solo, decláralo en
+# `devDependencies`: explícito y visible, que es como debería haber estado.
+autoInstallPeers: false
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - unrs-resolver
