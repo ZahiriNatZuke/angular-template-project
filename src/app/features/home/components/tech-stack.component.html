@@ -1,8 +1,11 @@
 <section class="py-20 px-4">
   <div class="mx-auto max-w-5xl">
-    <h2 class="mb-12 text-center text-3xl md:text-4xl font-semibold tracking-tight">
+    <h2 class="mb-3 text-center text-3xl md:text-4xl font-semibold tracking-tight">
       {{ 'home.stack.title' | translate }}
     </h2>
+    <p class="mx-auto mb-12 max-w-2xl text-center text-base-content/70">
+      {{ 'home.stack.description' | translate }}
+    </p>
 
     <dl class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
       @for (group of groups(); track group.key) {
@@ -12,13 +15,34 @@
           </dt>
           <dd>
             <ul class="space-y-2">
-              @for (item of group.items; track item) {
-                <li class="text-base-content/80">{{ item }}</li>
+              @for (item of group.items; track item.name) {
+                <li>
+                  <!--
+                    Cada herramienta lleva a su documentación oficial, en otra
+                    pestaña. `rel="noopener"` para que esa pestaña no pueda tocar
+                    esta.
+                  -->
+                  <a
+                    [href]="item.docs"
+                    target="_blank"
+                    rel="noopener"
+                    class="inline-flex items-baseline gap-1.5 text-base-content/80 transition-colors hover:text-primary"
+                  >
+                    <span class="link link-hover">{{ item.name }}</span>
+                    @if (item.version) {
+                      <span class="font-mono text-xs text-base-content/50">{{ item.version }}</span>
+                    }
+                  </a>
+                </li>
               }
             </ul>
           </dd>
         </div>
       }
     </dl>
+
+    <p class="mt-10 text-center text-sm text-base-content/50">
+      {{ 'home.stack.versionsNote' | translate }}
+    </p>
   </div>
 </section>
