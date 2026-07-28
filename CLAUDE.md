@@ -322,9 +322,16 @@ other's specs:
   viewport. `@playwright/test` is pinned rather than floating, because the browser
   binaries have to match the package version.
 
-The auth flows are exercised against responses intercepted with `page.route`, so the
-session paths are testable without standing up a backend. That is a stopgap, not a
-substitute: `apiUrl` points at a backend that does not exist in this repo.
+Most auth specs are exercised against responses intercepted with `page.route`.
+`auth-live.e2e.spec.ts` is not: it runs against `mock-server/`, a dependency-free
+`node:http` server that Playwright starts alongside the app. Intercepted responses
+cannot show whether the session cookie is really `HttpOnly`, whether it survives a
+reload, or whether a server rejects a mutation with no CSRF header — and those are
+precisely the claims this template makes. Run it by hand with `pnpm mock`
+(`ada@example.com` / `secret123`).
+
+The mock validates CSRF for real and returns 403 without a valid header. Keep it that
+way: it is the half of the contract the application cannot check on its own.
 
 Write end-to-end tests for what only a real browser shows. Two of the worst defects
 this template ever had — the store never validating the session at startup, and the

@@ -9,6 +9,43 @@ absorb by copying files across.
 
 ## [Unreleased]
 
+### Added
+
+- **A mock backend** in `mock-server/`, about 180 lines of `node:http` with no
+  dependencies, implementing the contract in `docs/BACKEND_AUTH_REQUIREMENTS.md`: CSRF
+  token, login, session check and logout, with the session in an `HttpOnly` cookie and
+  CORS set up for credentials. Run it with `pnpm mock` and sign in as
+  `ada@example.com` / `secret123`.
+
+  This closes the largest hole the template had: `apiUrl` pointed at a server that did
+  not exist, so its own differentiator — session in `HttpOnly` cookies with CSRF — could
+  not be exercised, by hand or in tests. The end-to-end suite worked around it by
+  intercepting responses, which tests the application but not the dealings with a real
+  server: no cookies, no CORS, and nobody rejecting a wrong token.
+
+  The mock **validates CSRF for real**: a mutation without a valid header gets a 403.
+  A backend like this would have caught, on the first try, the defect that sent every
+  login out without its token.
+- **`auth-live.e2e.spec.ts`**, five end-to-end tests that run against that mock with no
+  interception, checking what fabricated responses cannot: that the session cookie is
+  genuinely invisible to JavaScript, that the session survives a full reload, that the
+  login carries the CSRF header the server demands, that signing out invalidates the
+  session on the server too, and that wrong credentials leave the user on the form with
+  their error. Playwright starts both servers itself.
+
+### Changed
+
+- **Optional peers are no longer auto-installed** (`auto-install-peers=false`). Analog
+  declares the webpack builder `@angular-devkit/build-angular` as an optional peer, and
+  pnpm resolved it even though the project builds with `@angular/build`. It never reached
+  `node_modules`, but it sat in the lockfile — which is what Dependabot reads — and
+  accounted for most of its open security alerts, every one of them about a package the
+  project does not use. The install halves: **9362 → 5126 lines of lockfile, 996 → 538
+  packages**, with no missing-peer warnings and the whole suite still green.
+- `@playwright/test` **1.56.1 → 1.62.0**. It had been pinned to match browser binaries
+  that were preinstalled in a previous environment; CI installs its own, so the pin can
+  follow the package.
+
 ## [2.2.0]
 
 A landing page that argues its own case, and stops repeating figures nobody keeps up to
