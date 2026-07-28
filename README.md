@@ -525,6 +525,50 @@ this.themeStore.setTheme(Themes.Dark);
 - ✅ Clear documentation
 - ✅ CI on every pull request
 
+## Rendering: this is a client-side app, on purpose
+
+**No SSR, no prerendering.** The bundle loads, Angular boots, and everything renders in
+the browser. Saying it outright, because the template does invest in SEO — a title and
+description per route, `noindex` on the 404 — and that combination invites the
+assumption that something serves HTML. Nothing does.
+
+The reason is that three of the pieces here are browser-only, and each would need work
+before a server render:
+
+- **Notiflix** (`NotifyService`) touches `document` on import.
+- **`@vercel/speed-insights`** is a browser beacon.
+- **Theme and language** are read from cookies during app init, and on the server that
+  means reading the request rather than `document.cookie`.
+
+Authentication, by contrast, would survive it: HttpOnly cookies travel on the request.
+
+What CSR costs you: crawlers that do not execute JavaScript see an empty shell, and the
+first paint waits for the bundle. For an app behind a login — which is what the auth
+setup here points at — neither matters much. For a public, content-heavy site, it does.
+
+If you need SSR, `ng add @angular/ssr` is the starting point, and the three items above
+are the work it will surface. It is deliberately not wired up here: a template that
+half-supports server rendering is worse than one that clearly does not.
+
+## Removing what you don't need
+
+A template earns its keep by being easy to cut down. Each piece below comes out cleanly,
+and the test suite tells you immediately if you missed a thread.
+
+| Don't need | Remove |
+|---|---|
+| **i18n** | `@ngx-translate/*` and `src/assets/i18n/`; drop `provideTranslateService`/`provideTranslateHttpLoader` from `app.config.ts`, `LanguageStore`, and the `translate` pipes in templates. `initRouterSeoUpdates` waits for translations, so simplify it to read route `data` directly. |
+| **Notifications** | `notiflix`, `core/services/notify.service.ts` and its two call sites (the interceptor's 401 branch and `dashboard.page.ts`). |
+| **Authentication** | `core/stores/auth.store.ts`, `core/guards/`, `core/interceptors/auth.interceptor.ts`, `features/auth/`, `features/dashboard/`, and the auth wiring in `app.config.ts`. Keep the interceptor if you still want `withCredentials` everywhere. |
+| **Theming** | `daisyui`, the theme blocks in `styles.scss`, `ThemeStore` and the navbar toggle. TailwindCSS stays. |
+| **Analytics** | `@vercel/speed-insights` and the `injectSpeedInsights()` call in `src/main.ts`. |
+| **The landing page** | `features/home/` whole, then point `path: ''` at your own entry route. |
+| **End-to-end tests** | `@playwright/test`, `playwright.config.ts`, `e2e/`, the `e2e:*` scripts and the `End-to-end` job in `.github/workflows/ci.yml`. |
+| **The `safe-*` pipes** | `core/pipes/`. They sanitise HTML and URLs through Angular's sanitizer; keep them if you ever render user-supplied markup. |
+
+After cutting, run `pnpm lint && pnpm test && pnpm build`. Unused imports are lint
+errors here, so leftovers surface on the spot.
+
 ## Notes and known limitations
 
 - **NgRx has no Angular 22 release yet.** `@ngrx/signals` still declares a peer on
