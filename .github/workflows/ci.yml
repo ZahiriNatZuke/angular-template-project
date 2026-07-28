@@ -112,3 +112,19 @@ jobs:
           name: dist
           path: dist/
           retention-days: 7
+
+  # Un secreto que llega a la historia de git ya está comprometido aunque se borre después: el
+  # commit sigue ahí y en un repositorio público ya lo ha visto quien quisiera. El secret
+  # scanning de GitHub cubre los patrones que reconoce; gitleaks añade los que no.
+  # `fetch-depth: 0` es imprescindible: sin la historia completa solo miraría el último commit.
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Scan for secrets (gitleaks)
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
