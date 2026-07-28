@@ -1,6 +1,6 @@
 {
   "name": "angular-template-project",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Modern Angular 22 template with zoneless change detection, NgRx SignalStore, ultra-secure HttpOnly cookie authentication, TailwindCSS v4, and i18n support. Production-ready with best practices for security, performance, and scalability.",
   "keywords": [
     "angular",
