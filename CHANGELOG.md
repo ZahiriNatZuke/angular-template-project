@@ -42,6 +42,12 @@ absorb by copying files across.
   accounted for most of its open security alerts, every one of them about a package the
   project does not use. The install halves: **9362 → 5126 lines of lockfile, 996 → 538
   packages**, with no missing-peer warnings and the whole suite still green.
+- **Transitive packages with security advisories are pinned above them** through pnpm
+  overrides: `brace-expansion`, `fast-uri`, `ip-address`, `minimatch`, `picomatch`, `qs`,
+  `sigstore` and `tar`. None is a direct dependency and none had a fix available upstream
+  yet, so the version is forced here — each one within its own major, and the whole suite
+  re-run from a clean install. Drop an entry as soon as the package that pulls it catches
+  up.
 - `@playwright/test` **1.56.1 → 1.62.0**. It had been pinned to match browser binaries
   that were preinstalled in a previous environment; CI installs its own, so the pin can
   follow the package.
