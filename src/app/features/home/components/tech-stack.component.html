@@ -1,0 +1,24 @@
+<section class="py-20 px-4">
+  <div class="mx-auto max-w-5xl">
+    <h2 class="mb-12 text-center text-3xl md:text-4xl font-semibold tracking-tight">
+      {{ 'home.stack.title' | translate }}
+    </h2>
+
+    <dl class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      @for (group of groups(); track group.key) {
+        <div>
+          <dt class="mb-3 text-sm font-semibold uppercase tracking-wider text-base-content/50">
+            {{ 'home.stack.groups.' + group.key | translate }}
+          </dt>
+          <dd>
+            <ul class="space-y-2">
+              @for (item of group.items; track item) {
+                <li class="text-base-content/80">{{ item }}</li>
+              }
+            </ul>
+          </dd>
+        </div>
+      }
+    </dl>
+  </div>
+</section>

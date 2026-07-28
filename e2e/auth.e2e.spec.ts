@@ -115,11 +115,7 @@ test.describe('Autenticación', () => {
 		await expect(page).toHaveURL(/\/dashboard/);
 	});
 
-	// Bloqueado por un fallo real del template: el interceptor trata cualquier
-	// 401 como sesión caducada y llama a `logout()`, que restaura el estado
-	// inicial y borra el mensaje que `login` acababa de escribir. El usuario no
-	// llega a ver por qué falló. Se habilita al arreglarlo.
-	test.fixme('un login rechazado deja al usuario en la pantalla con un error', async ({
+	test('un login rechazado deja al usuario en la pantalla con un error', async ({
 		page,
 	}) => {
 		await mockAuthApi(page, { loginFails: true });
@@ -133,11 +129,7 @@ test.describe('Autenticación', () => {
 		await expect(page).toHaveURL(/\/auth\/login/);
 	});
 
-	// Bloqueado por un fallo real del template: al cargar directamente una ruta
-	// protegida, `authGuard` se evalúa antes de que `checkAuth()` haya resuelto,
-	// así que un usuario con sesión válida acaba en el login. Se habilita al
-	// arreglarlo.
-	test.fixme('con sesión activa el dashboard es accesible y el logout devuelve al login', async ({
+	test('con sesión activa el dashboard es accesible y el logout devuelve al login', async ({
 		page,
 	}) => {
 		await mockAuthApi(page, { session: USER });
@@ -150,30 +142,37 @@ test.describe('Autenticación', () => {
 		await expect(page).toHaveURL(/\/auth\/login/);
 	});
 
-	// Bloqueado por la misma causa que los dos anteriores: la validación de
-	// sesión responde 401 al arrancar, el interceptor lo interpreta como sesión
-	// caducada y renavega, lo que vacía el formulario antes de poder enviarlo.
-	// La cabecera sí está cubierta a nivel unitario en `auth.interceptor.spec.ts`;
-	// este test añade la comprobación en navegador real y se habilita al
-	// arreglar el interceptor.
-	test.fixme('el interceptor adjunta el token CSRF en las mutaciones', async ({
+	// Este test estuvo en `fixme` mientras el fallo que destapó seguía sin
+	// aislar, y fue el que lo encontró: el store perdía el token porque
+	// `checkAuth` reseteaba con `...initialState` y el 401 normal de un anónimo
+	// borraba lo que `/auth/csrf` acababa de traer. El caso vive aquí y no solo
+	// en `auth.interceptor.spec.ts` precisamente por eso: en el unitario la
+	// cabecera se comprueba con el token ya puesto a mano, así que el bug estaba
+	// en la costura entre las dos peticiones del arranque, no en el interceptor.
+	test('el interceptor adjunta el token CSRF en las mutaciones', async ({
 		page,
 	}) => {
 		const { csrfServed } = await mockAuthApi(page);
 
-		const loginRequest = page.waitForRequest(request =>
-			request.url().includes('/api/auth/login')
+		// Se filtra por método: la cabecera `X-CSRF-Token` es no estándar y la
+		// petición va a otro origen, así que el navegador manda antes un
+		// preflight `OPTIONS` que, por definición, no la lleva.
+		const loginRequest = page.waitForRequest(
+			request =>
+				request.url().includes('/api/auth/login') && request.method() === 'POST'
 		);
 
 		await page.goto('/auth/login');
 		// El store pide el token al arrancar la aplicación; sin esperarlo, el
 		// formulario podría enviarse antes de que la cabecera esté disponible.
 		await csrfServed;
-		// Y se deja asentar el arranque: la validación de sesión responde 401,
-		// lo que dispara un logout que renavega y vaciaría el formulario a medio
-		// rellenar.
-		await page.waitForLoadState('networkidle');
-
+		// `csrfServed` se resuelve cuando la respuesta sale hacia el navegador,
+		// no cuando el store la ha procesado. Una persona tarda segundos en
+		// escribir sus credenciales; el test, milisegundos.
+		await expect
+			.poll(() => page.evaluate(() => document.readyState))
+			.toBe('complete');
+		await page.waitForTimeout(150);
 		await page.locator('#email').fill(USER.email);
 		await page.locator('#password').fill('secret123');
 		await page.getByRole('button', { name: /sign in|entrar/i }).click();
