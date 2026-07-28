@@ -611,9 +611,14 @@ errors here, so leftovers surface on the spot.
 - **NgRx has no Angular 22 release yet.** `@ngrx/signals` still declares a peer on
   `@angular/core: ^21.0.0`, so installing prints a peer warning. The stores work — the
   test suite exercises all three — but the warning stays until NgRx ships v22.
-- **`@angular-devkit/build-angular` is still pulled in transitively.** The project uses
-  `@angular/build`, but Analog declares the webpack builder as an optional peer and pnpm
-  auto-installs it. Harmless, just extra install weight.
+- **Optional peers are not auto-installed** (`auto-install-peers=false` in `.npmrc`).
+  Analog declares the webpack builder `@angular-devkit/build-angular` as an optional
+  peer, and pnpm used to resolve it even though this project builds with
+  `@angular/build`. It never reached `node_modules`, but it did sit in the lockfile —
+  which is what Dependabot reads — and produced most of its security alerts, all about
+  packages the project does not use. Turning the setting off halves the install: 9362 to
+  5126 lines of lockfile, 996 to 538 packages. If you add a dependency whose peer you
+  actually need, declare it in `devDependencies`.
 - **Icon packages are optional.** `lucide` and `@lucide/angular` power the landing page's
   icons; drop them if you bring your own icon set.
 

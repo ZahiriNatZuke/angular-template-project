@@ -78,7 +78,7 @@
     "@angular/cli": "^22.0.8",
     "@angular/compiler-cli": "^22.0.8",
     "@biomejs/biome": "^2.5.5",
-    "@playwright/test": "1.56.1",
+    "@playwright/test": "1.62.0",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^26.1.2",
     "@vitest/coverage-v8": "^4.1.10",

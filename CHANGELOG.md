@@ -9,6 +9,19 @@ absorb by copying files across.
 
 ## [Unreleased]
 
+### Changed
+
+- **Optional peers are no longer auto-installed** (`auto-install-peers=false`). Analog
+  declares the webpack builder `@angular-devkit/build-angular` as an optional peer, and
+  pnpm resolved it even though the project builds with `@angular/build`. It never reached
+  `node_modules`, but it sat in the lockfile — which is what Dependabot reads — and
+  accounted for most of its open security alerts, every one of them about a package the
+  project does not use. The install halves: **9362 → 5126 lines of lockfile, 996 → 538
+  packages**, with no missing-peer warnings and the whole suite still green.
+- `@playwright/test` **1.56.1 → 1.62.0**. It had been pinned to match browser binaries
+  that were preinstalled in a previous environment; CI installs its own, so the pin can
+  follow the package.
+
 ## [2.2.0]
 
 A landing page that argues its own case, and stops repeating figures nobody keeps up to
