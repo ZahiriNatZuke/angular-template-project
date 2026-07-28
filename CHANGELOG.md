@@ -35,7 +35,7 @@ absorb by copying files across.
 
 ### Changed
 
-- **Optional peers are no longer auto-installed** (`auto-install-peers=false`). Analog
+- **Optional peers are no longer auto-installed** (`autoInstallPeers: false` in `pnpm-workspace.yaml`). Analog
   declares the webpack builder `@angular-devkit/build-angular` as an optional peer, and
   pnpm resolved it even though the project builds with `@angular/build`. It never reached
   `node_modules`, but it sat in the lockfile — which is what Dependabot reads — and

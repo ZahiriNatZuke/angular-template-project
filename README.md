@@ -638,10 +638,14 @@ errors here, so leftovers surface on the spot.
 
 ## Notes and known limitations
 
-- **NgRx has no Angular 22 release yet.** `@ngrx/signals` still declares a peer on
-  `@angular/core: ^21.0.0`, so installing prints a peer warning. The stores work — the
-  test suite exercises all three — but the warning stays until NgRx ships v22.
-- **Optional peers are not auto-installed** (`auto-install-peers=false` in `.npmrc`).
+- **NgRx has no stable Angular 22 release yet.** The latest stable,
+  `@ngrx/signals@21.1.1`, declares a peer on `@angular/core: ^21.0.0`. A
+  `22.0.0-beta.0` exists and does declare `^22.0.0`, but a template that calls itself
+  production-ready has no business shipping a beta as its state management. The stores
+  work — the test suite exercises all three — and this note goes away when v22 ships
+  stable.
+- **Optional peers are not auto-installed** (`autoInstallPeers: false` in
+  `pnpm-workspace.yaml`).
   Analog declares the webpack builder `@angular-devkit/build-angular` as an optional
   peer, and pnpm used to resolve it even though this project builds with
   `@angular/build`. It never reached `node_modules`, but it did sit in the lockfile —
