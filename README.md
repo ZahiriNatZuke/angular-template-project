@@ -280,18 +280,48 @@ project has no `zone.js` dependency at all.
 
 The **end-to-end suite** lives in `e2e/`, runs on a desktop and a mobile viewport, and
 covers the login flows, the landing page and its deferred sections, focus management,
-theme and language persistence across a reload, and the 404. API responses are
-intercepted with `page.route`, so the auth paths run without a backend. The first run on
-a new machine needs the browsers:
+theme and language persistence across a reload, and the 404. The first run on a new
+machine needs the browsers:
 
 ```bash
 pnpm exec playwright install chromium
 ```
 
+Most specs intercept API responses with `page.route`. **`auth-live.e2e.spec.ts` does
+not**: it runs against the mock backend below, because what this template claims to do
+well cannot be checked against fabricated responses — that the session cookie really is
+`HttpOnly`, that it survives a full reload, and that a server rejects a mutation whose
+CSRF header is missing. Playwright starts both servers itself, so `pnpm e2e` is all you
+need.
+
 Both suites earn their keep. The end-to-end ones found two defects that were invisible
 to unit tests and to reading the code: the store never validated the session at
 startup, and the CSRF token was being wiped between the two startup requests, so every
 login went out without its header.
+
+### Mock backend
+
+`apiUrl` points at `http://localhost:3000/api`, and this repository now ships something
+that answers there:
+
+```bash
+pnpm mock
+```
+
+Roughly 180 lines of `node:http` in `mock-server/`, no dependencies, implementing the
+contract in `docs/BACKEND_AUTH_REQUIREMENTS.md`: CSRF token, login, session check and
+logout, with the session in an `HttpOnly` cookie and CORS configured for credentials.
+Sign in with **`ada@example.com` / `secret123`**.
+
+It **validates CSRF for real** — a mutation without a valid header gets a 403 — which is
+the half of the contract the application cannot check on its own. A backend like this
+would have caught, on the first try, the defect that sent every login out without its
+token.
+
+It is not a backend: sessions live in memory, passwords are compared in plain text and
+there is no database. It exists so the template can be developed and tested against
+something, and so you can read the whole thing in five minutes before replacing it with
+yours.
 
 ### Code Quality
 
