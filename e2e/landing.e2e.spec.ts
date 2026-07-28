@@ -62,6 +62,27 @@ test.describe('Landing', () => {
 		await expect(heroTitle).toHaveText(after ?? '');
 	});
 
+	test('las secciones diferidas se cargan al llegar a ellas', async ({
+		page,
+	}) => {
+		const comparison = page.locator('app-auth-comparison');
+		const stack = page.locator('app-tech-stack');
+
+		// Al cargar no están: viven en bloques `@defer (on viewport)`, así que su
+		// chunk no forma parte del bundle inicial. Solo un navegador real ejercita
+		// esto — en jsdom no hay `IntersectionObserver`.
+		await expect(comparison).toHaveCount(0);
+		await expect(stack).toHaveCount(0);
+
+		await page
+			.getByRole('heading', { name: /what's included|qué incluye/i })
+			.scrollIntoViewIfNeeded();
+		await expect(comparison).toBeVisible();
+
+		await page.locator('footer').scrollIntoViewIfNeeded();
+		await expect(stack).toBeVisible();
+	});
+
 	test('copia el comando de instalación al portapapeles', async ({
 		page,
 		context,
