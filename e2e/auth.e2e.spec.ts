@@ -142,6 +142,28 @@ test.describe('Autenticación', () => {
 		await expect(page).toHaveURL(/\/auth\/login/);
 	});
 
+	test('el aviso de cierre de sesión llega aunque Notiflix se cargue aparte', async ({
+		page,
+	}) => {
+		// `NotifyService` carga Notiflix con `import()` para mantenerlo fuera del
+		// bundle inicial —son 14 kB transferidos que la mayoría de las visitas no
+		// necesita—, así que el aviso llega un tick después y sobrevive a la
+		// navegación al login. Eso solo se comprueba en un navegador real.
+		await mockAuthApi(page, { session: USER });
+
+		const notiflixChunk = page.waitForResponse(response =>
+			/notiflix/i.test(response.url())
+		);
+
+		await page.goto('/dashboard');
+		await page.getByRole('button', { name: /sign out|cerrar sesión/i }).click();
+
+		await notiflixChunk;
+		await expect(
+			page.getByText(/you signed out|cerraste la sesión/i)
+		).toBeVisible();
+	});
+
 	// Este test estuvo en `fixme` mientras el fallo que destapó seguía sin
 	// aislar, y fue el que lo encontró: el store perdía el token porque
 	// `checkAuth` reseteaba con `...initialState` y el 401 normal de un anónimo

@@ -68,7 +68,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 				// Se avisa antes de cerrar sesión: `logout()` navega al login, y sin
 				// esto el usuario acaba ahí sin ninguna explicación de por qué se le
 				// echó a mitad de lo que estaba haciendo.
-				injector.get(NotifyService).warning('notify.session.expired');
+				// `void`: el aviso carga Notiflix bajo demanda y devuelve una promesa,
+				// pero cerrar la sesión no debe esperar a que aparezca el toast.
+				void injector.get(NotifyService).warning('notify.session.expired');
 				authStore.logout();
 			}
 
