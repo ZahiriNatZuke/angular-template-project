@@ -57,18 +57,7 @@ absorb by copying files across.
 
 ### Fixed
 
-- **The interceptor left the whole app untranslated.** Injecting `NotifyService` eagerly
-  there chained `interceptor → NotifyService → TranslateService → request → interceptor`,
-  because the i18n loader fetches its files through that same interceptor. Angular
-  aborted with `NG0200` and every page rendered raw translation keys. The service is now
-  resolved from the `Injector` only when there is something to announce. Same cycle
-  `AuthStore` had when it did HTTP in `withHooks({ onInit })` — an interceptor is a
-  delicate place to inject into.
-- **Documentation that had stopped being true.** The README advertised "42 tests" and
-  never mentioned Playwright, `pnpm e2e`, the end-to-end CI job or coverage thresholds.
-  The landing page itself showed "42 tests" to visitors.
-
-### Fixed (session handling)
+Session handling first, since that is where the serious ones were:
 
 - **Startup session validation never ran.** `AuthStore` fired `fetchCsrfToken()` and
   `checkAuth()` from `withHooks({ onInit })`. Those requests pass through
@@ -102,12 +91,27 @@ absorb by copying files across.
   exempted a business endpoint such as `/api/users/auth/me`, silently keeping expired
   sessions alive. It now compares the full URL.
 
-### Fixed
+And the rest:
 
+- **The interceptor left the whole app untranslated.** Injecting `NotifyService` eagerly
+  there chained `interceptor → NotifyService → TranslateService → request → interceptor`,
+  because the i18n loader fetches its files through that same interceptor. Angular
+  aborted with `NG0200` and every page rendered raw translation keys. The service is now
+  resolved from the `Injector` only when there is something to announce. Same cycle
+  `AuthStore` had when it did HTTP in `withHooks({ onInit })` — an interceptor is a
+  delicate place to inject into.
 - **`RouterStateService.params()` and `.queryParams()` returned garbage.** They read
   `route.params` and `route.queryParams`, which are Observables, so spreading them copied
   the Subject's internals (`_value`, `closed`, `observers`) instead of the values. They now
   read from `route.snapshot`, consistent with how the service already handled `data`.
+- **Documentation that had stopped being true.** The README advertised "42 tests" and
+  never mentioned Playwright, `pnpm e2e`, the end-to-end CI job or coverage thresholds.
+  The landing page itself showed "42 tests" to visitors.
+- **No pull request could be merged at all.** The `main` ruleset required a deployment to
+  the `Production` environment, but Vercel deploys pull requests to `Preview` and
+  Production is only reached *after* merging — a circular requirement that left every
+  pull request blocked with CI green. The rule was removed; CodeQL, the other unmeetable
+  requirement, now has the workflow it was always missing.
 
 ## [2.0.0]
 
