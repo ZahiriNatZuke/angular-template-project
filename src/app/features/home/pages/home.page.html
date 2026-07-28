@@ -95,84 +95,29 @@
 </section>
 
 <!-- ── Autenticación ──────────────────────────────────────────────────────── -->
-<section class="border-b border-base-300 bg-base-200 py-20 px-4">
-  <div class="mx-auto max-w-5xl">
-    <div class="mb-10 text-center">
-      <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
-        {{ 'home.auth.eyebrow' | translate }}
-      </p>
-      <h2 class="mb-4 text-3xl md:text-4xl font-semibold tracking-tight">
-        {{ 'home.auth.title' | translate }}
-      </h2>
-      <p class="mx-auto max-w-2xl text-base-content/70 leading-relaxed">
-        {{ 'home.auth.description' | translate }}
-      </p>
-    </div>
+<!--
+  Diferida: está por debajo del pliegue, así que su plantilla y el icono que solo
+  ella usa no tienen por qué viajar en el bundle inicial. `prefetch on idle`
+  descarga el chunk en cuanto el navegador está ocioso, de modo que al llegar
+  scrolleando ya está en memoria; el `@placeholder` reserva altura para que la
+  página no dé un salto al sustituirlo.
 
-    <!--
-      Tres columnas no caben en un móvil sin scroll horizontal, así que la misma
-      información se presenta como tarjetas apiladas por debajo de `md`.
-    -->
-    <div class="hidden rounded-box border border-base-300 bg-base-100 md:block">
-      <table class="table">
-        <thead>
-          <tr>
-            <th class="w-1/3">{{ 'home.auth.table.aspect' | translate }}</th>
-            <th>
-              <span class="flex items-center gap-2">
-                <svg aria-hidden="true" lucideX class="size-4 text-error"></svg>
-                {{ 'home.auth.table.localStorage' | translate }}
-              </span>
-            </th>
-            <th>
-              <span class="flex items-center gap-2">
-                <svg aria-hidden="true" lucideCheck class="size-4 text-success"></svg>
-                {{ 'home.auth.table.httpOnly' | translate }}
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of authComparison(); track row) {
-            <tr>
-              <td class="font-medium">{{ 'home.auth.rows.' + row + '.aspect' | translate }}</td>
-              <td class="text-base-content/70">{{ 'home.auth.rows.' + row + '.localStorage' | translate }}</td>
-              <td class="text-base-content/70">{{ 'home.auth.rows.' + row + '.httpOnly' | translate }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <div class="grid gap-3 md:hidden">
-      @for (row of authComparison(); track row) {
-        <article class="rounded-box border border-base-300 bg-base-100 p-4">
-          <h3 class="mb-3 font-semibold">{{ 'home.auth.rows.' + row + '.aspect' | translate }}</h3>
-
-          <div class="mb-3">
-            <p class="mb-1 flex items-center gap-2 text-sm font-medium">
-              <svg aria-hidden="true" lucideX class="size-4 shrink-0 text-error"></svg>
-              {{ 'home.auth.table.localStorage' | translate }}
-            </p>
-            <p class="pl-6 text-sm text-base-content/70">
-              {{ 'home.auth.rows.' + row + '.localStorage' | translate }}
-            </p>
-          </div>
-
-          <div>
-            <p class="mb-1 flex items-center gap-2 text-sm font-medium">
-              <svg aria-hidden="true" lucideCheck class="size-4 shrink-0 text-success"></svg>
-              {{ 'home.auth.table.httpOnly' | translate }}
-            </p>
-            <p class="pl-6 text-sm text-base-content/70">
-              {{ 'home.auth.rows.' + row + '.httpOnly' | translate }}
-            </p>
-          </div>
-        </article>
-      }
-    </div>
-  </div>
-</section>
+  Sobre el balance real, medido en este repo: diferir estas dos secciones saca
+  5 kB a chunks propios, pero el runtime de las vistas diferidas añade unos 12 kB
+  al bundle inicial (3,5 kB transferidos). En una landing de este tamaño el
+  intercambio no sale a cuenta en bytes; se mantiene porque el patrón es el que
+  hay que copiar cuando lo diferido pesa de verdad —un editor, un gráfico, un
+  mapa—, que es el caso para el que existe `@defer`.
+-->
+@defer (on viewport; prefetch on idle) {
+  <app-auth-comparison />
+} @placeholder {
+  <section class="min-h-[32rem] border-b border-base-300 bg-base-200 py-20 px-4"></section>
+} @loading (after 100ms; minimum 200ms) {
+  <section class="flex min-h-[32rem] items-center justify-center border-b border-base-300 bg-base-200 py-20 px-4">
+    <span class="loading loading-spinner loading-lg text-primary" aria-hidden="true"></span>
+  </section>
+}
 
 <!-- ── Características ────────────────────────────────────────────────────── -->
 <section class="border-b border-base-300 py-20 px-4">
@@ -205,27 +150,9 @@
 </section>
 
 <!-- ── Stack ──────────────────────────────────────────────────────────────── -->
-<section class="py-20 px-4">
-  <div class="mx-auto max-w-5xl">
-    <h2 class="mb-12 text-center text-3xl md:text-4xl font-semibold tracking-tight">
-      {{ 'home.stack.title' | translate }}
-    </h2>
-
-    <dl class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      @for (group of stackGroups(); track group.key) {
-        <div>
-          <dt class="mb-3 text-sm font-semibold uppercase tracking-wider text-base-content/50">
-            {{ 'home.stack.groups.' + group.key | translate }}
-          </dt>
-          <dd>
-            <ul class="space-y-2">
-              @for (item of group.items; track item) {
-                <li class="text-base-content/80">{{ item }}</li>
-              }
-            </ul>
-          </dd>
-        </div>
-      }
-    </dl>
-  </div>
-</section>
+<!-- Lo último de la página: se difiere por el mismo motivo. -->
+@defer (on viewport; prefetch on idle) {
+  <app-tech-stack />
+} @placeholder {
+  <section class="min-h-[24rem] py-20 px-4"></section>
+}

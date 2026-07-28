@@ -22,6 +22,17 @@ export class NotifyService {
 		);
 	}
 
+	/**
+	 * Para lo que ha salido mal y el usuario necesita saber. Faltaba, que era
+	 * justamente el caso más frecuente.
+	 */
+	failure(translateKey: string): void {
+		Notify.failure(
+			this.#translate.instant(translateKey),
+			this.#defaultOptions()
+		);
+	}
+
 	info(translateKey: string): void {
 		Notify.info(this.#translate.instant(translateKey), this.#defaultOptions());
 	}
