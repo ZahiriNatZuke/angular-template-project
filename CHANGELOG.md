@@ -9,6 +9,11 @@ absorb by copying files across.
 
 ## [Unreleased]
 
+## [2.2.0]
+
+A landing page that argues its own case, and stops repeating figures nobody keeps up to
+date.
+
 ### Added
 
 - **The technology stack links to documentation.** Every tool in the four groups is now a
@@ -216,6 +221,7 @@ the point — the first version where the test suite, the router and the theme a
 Initial template: standalone components, zoneless change detection, NgRx SignalStore,
 HttpOnly cookie authentication, TailwindCSS v4 with DaisyUI, and i18n.
 
-[unreleased]: https://github.com/ZahiriNatZuke/angular-template-project/compare/v2.1.0...HEAD
+[unreleased]: https://github.com/ZahiriNatZuke/angular-template-project/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/ZahiriNatZuke/angular-template-project/releases/tag/v2.2.0
 [2.1.0]: https://github.com/ZahiriNatZuke/angular-template-project/releases/tag/v2.1.0
 [2.0.0]: https://github.com/ZahiriNatZuke/angular-template-project/releases/tag/v2.0.0
