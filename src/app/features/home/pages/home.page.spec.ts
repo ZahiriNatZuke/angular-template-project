@@ -1,4 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import {
+	DeferBlockBehavior,
+	DeferBlockState,
+	TestBed,
+} from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -14,6 +18,10 @@ describe('HomePage', () => {
 				provideRouter([{ path: '', component: HomePage }]),
 				provideTranslateService(),
 			],
+			// Los bloques `@defer` se controlan desde el test en lugar de dejar que
+			// se disparen solos: `on viewport` necesita `IntersectionObserver`, que
+			// jsdom no implementa, y el estado quedaría además a merced del entorno.
+			deferBlockBehavior: DeferBlockBehavior.Manual,
 		});
 
 		harness = await RouterTestingHarness.create();
@@ -24,17 +32,39 @@ describe('HomePage', () => {
 		const sections =
 			harness.routeNativeElement?.querySelectorAll('section') ?? [];
 
+		// Cinco bloques, contando los dos `@placeholder`: son `section` con la
+		// misma altura reservada que el contenido que sustituyen, así que la página
+		// no salta cuando el bloque diferido se resuelve.
 		expect(sections.length).toBe(5);
 	});
 
 	it('renderiza una tarjeta por característica', () => {
 		const cards = harness.routeNativeElement?.querySelectorAll('article') ?? [];
 
-		// Seis características más una tarjeta por fila de la comparativa, que
-		// solo se muestra en móvil pero está en el DOM.
-		expect(cards.length).toBe(
-			page.features().length + page.authComparison().length
-		);
+		expect(cards.length).toBe(page.features().length);
+	});
+
+	it('no trae el contenido diferido en el render inicial', () => {
+		const root = harness.routeNativeElement;
+
+		// Lo que se difiere no está en el DOM hasta que su disparador se cumple.
+		expect(root?.querySelector('app-auth-comparison')).toBeNull();
+		expect(root?.querySelector('app-tech-stack')).toBeNull();
+		expect(root?.querySelector('table')).toBeNull();
+	});
+
+	it('resuelve los bloques diferidos con su contenido real', async () => {
+		const blocks = await harness.fixture.getDeferBlocks();
+		expect(blocks.length).toBe(2);
+
+		for (const block of blocks) {
+			await block.render(DeferBlockState.Complete);
+		}
+
+		const root = harness.routeNativeElement;
+		expect(root?.querySelector('app-auth-comparison')).not.toBeNull();
+		expect(root?.querySelector('app-tech-stack')).not.toBeNull();
+		expect(root?.querySelector('table')).not.toBeNull();
 	});
 
 	it('cada característica tiene su icono', () => {

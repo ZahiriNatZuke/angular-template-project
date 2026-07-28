@@ -1,5 +1,15 @@
+<!-- Enlace de salto: invisible hasta que recibe el foco, primer tabulador de la
+     página. Sin él, llegar al contenido con teclado obliga a recorrer todo el
+     navbar en cada navegación. -->
+<a
+  [href]="'#' + mainContentId"
+  class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:btn focus:btn-primary focus:btn-sm"
+>
+  {{ 'a11y.skipToContent' | translate }}
+</a>
+
 <!-- Navigation -->
-<div class="navbar sticky top-0 z-50 border-b border-base-300 bg-base-100/80 backdrop-blur">
+<header class="navbar sticky top-0 z-50 border-b border-base-300 bg-base-100/80 backdrop-blur">
   <div class="navbar-start">
     <a routerLink="/" class="flex items-center gap-2 text-lg font-semibold tracking-tight">
       <span class="text-primary">
@@ -34,10 +44,14 @@
       {{ languageStore.current() === Languages.English ? 'ES' : 'EN' }}
     </button>
   </div>
-</div>
+</header>
 
-<!-- Routed content -->
-<router-outlet />
+<!-- Routed content. `tabindex="-1"` lo hace enfocable por programa sin meterlo en
+     el orden de tabulación: `initRouteFocusManagement` deja aquí el foco tras
+     cada navegación. -->
+<main [id]="mainContentId" tabindex="-1" class="outline-none">
+  <router-outlet />
+</main>
 
 <!-- Footer -->
 <footer class="footer footer-center p-10 bg-base-200 text-base-content">

@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { AuthComparisonComponent } from '@app/features/home/components/auth-comparison.component';
+import { TechStackComponent } from '@app/features/home/components/tech-stack.component';
 import { AngularLogoComponent } from '@core/components/angular-logo.component';
 import { APP_LINKS } from '@core/utils/app-links';
 import {
@@ -11,7 +13,6 @@ import {
 	LucidePalette,
 	LucideRadioTower,
 	LucideShieldCheck,
-	LucideX,
 	LucideZap,
 } from '@lucide/angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -21,13 +22,6 @@ interface Feature {
 	/** Sufijo de la clave i18n bajo `home.features.*`. */
 	key: string;
 	icon: LucideIcon;
-}
-
-/** Un grupo del bloque de stack tecnológico. */
-interface StackGroup {
-	/** Sufijo de la clave i18n bajo `home.stack.groups.*`. */
-	key: string;
-	items: string[];
 }
 
 @Component({
@@ -41,7 +35,10 @@ interface StackGroup {
 		LucideDynamicIcon,
 		LucideCopy,
 		LucideCheck,
-		LucideX,
+		// Se usan solo dentro de bloques `@defer`, así que el compilador los saca
+		// del bundle inicial y les genera un chunk aparte.
+		AuthComparisonComponent,
+		TechStackComponent,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -66,25 +63,6 @@ export class HomePage {
 		{ key: 'testing', icon: LucideFlaskConical },
 	]);
 
-	stackGroups = signal<StackGroup[]>([
-		{
-			key: 'framework',
-			items: ['Angular 22', 'TypeScript 6', 'RxJS'],
-		},
-		{
-			key: 'state',
-			items: ['NgRx SignalStore', 'Signals', 'ngx-translate'],
-		},
-		{
-			key: 'styling',
-			items: ['TailwindCSS v4', 'DaisyUI', 'Lucide'],
-		},
-		{
-			key: 'tooling',
-			items: ['Vitest', 'Biome', 'pnpm', 'Husky'],
-		},
-	]);
-
 	/** Fragmento que se muestra en la sección de estado. */
 	storeSnippet = signal(`export const CounterStore = signalStore(
   { providedIn: 'root' },
@@ -100,15 +78,6 @@ export class HomePage {
     },
   }))
 );`);
-
-	/** Filas de la comparación entre almacenar el token en JS o en cookie. */
-	authComparison = signal([
-		'storage',
-		'xss',
-		'csrf',
-		'refresh',
-		'setup',
-	] as const);
 
 	async copyInstallCommand(): Promise<void> {
 		try {

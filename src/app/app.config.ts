@@ -21,8 +21,10 @@ import {
 	withViewTransitions,
 } from '@angular/router';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
+import { AuthStore } from '@core/stores/auth.store';
 import { LanguageStore } from '@core/stores/language.store';
 import { ThemeStore } from '@core/stores/theme.store';
+import { initRouteFocusManagement } from '@core/utils/route-focus.init';
 import { initRouterSeoUpdates } from '@core/utils/router-seo.init';
 import { environment } from '@environments/environment';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -59,7 +61,21 @@ export const appConfig: ApplicationConfig = {
 		provideAppInitializer(() => {
 			inject(LanguageStore);
 			inject(ThemeStore);
+
+			// La sesión se arranca aquí y no en `withHooks({ onInit })` del store:
+			// hacer HTTP durante su construcción provoca una dependencia circular
+			// con `authInterceptor`, que inyecta ese mismo store. Aquí ya está
+			// completamente construido.
+			//
+			// No se espera a la respuesta: los guards aguardan a
+			// `isSessionChecked`, así que la aplicación puede pintar mientras la
+			// sesión se valida.
+			const authStore = inject(AuthStore);
+			authStore.fetchCsrfToken();
+			authStore.checkAuth();
+
 			initRouterSeoUpdates();
+			initRouteFocusManagement();
 		}),
 		{
 			provide: DATE_PIPE_DEFAULT_OPTIONS,

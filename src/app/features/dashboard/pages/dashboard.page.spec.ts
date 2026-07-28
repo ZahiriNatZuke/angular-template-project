@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { NotifyService } from '@core/services/notify.service';
 import { AuthStore } from '@core/stores/auth.store';
 import { provideTranslateService } from '@ngx-translate/core';
 import { DashboardPage } from './dashboard.page';
@@ -12,6 +13,7 @@ describe('DashboardPage', () => {
 		string,
 		unknown
 	>;
+	let notifyMock: { info: ReturnType<typeof vi.fn> };
 
 	beforeEach(async () => {
 		authStoreMock = {
@@ -20,12 +22,14 @@ describe('DashboardPage', () => {
 			userRole: () => 'admin',
 			logout: vi.fn(),
 		};
+		notifyMock = { info: vi.fn() };
 
 		TestBed.configureTestingModule({
 			providers: [
 				provideRouter([{ path: 'dashboard', component: DashboardPage }]),
 				provideTranslateService(),
 				{ provide: AuthStore, useValue: authStoreMock },
+				{ provide: NotifyService, useValue: notifyMock },
 			],
 		});
 
@@ -49,9 +53,12 @@ describe('DashboardPage', () => {
 		expect(authStoreMock.logout).toHaveBeenCalledTimes(1);
 	});
 
-	it('logout delega en el store sin lógica propia', () => {
+	it('logout delega en el store y confirma al usuario', () => {
 		page.logout();
 
 		expect(authStoreMock.logout).toHaveBeenCalledTimes(1);
+		// Cerrar sesión lleva al login, y una pantalla de login sin más contexto no
+		// distingue entre «me fui yo» y «me echaron».
+		expect(notifyMock.info).toHaveBeenCalledWith('notify.session.closed');
 	});
 });
