@@ -19,8 +19,9 @@ Everything described below is wired up and covered by tests — the template run
 | `/dashboard` | Protected route behind `authGuard`, redirecting with a `returnUrl` |
 | anything else | A real 404 page that keeps the attempted URL and marks itself `noindex` |
 
-Plus **42 tests** over the three stores, the CSRF interceptor and both guards, and a
-**GitHub Actions workflow** running lint, tests (Node 22 and 24) and a production build.
+Plus **95 unit tests** and **32 end-to-end tests**, and a **GitHub Actions workflow**
+running lint, the unit suite on Node 22 and 24, the end-to-end suite and a production
+build.
 
 ## Key Features
 
@@ -31,7 +32,7 @@ Plus **42 tests** over the three stores, the CSRF interceptor and both guards, a
 - **Signal-based reactivity** throughout the application
 - **NgRx SignalStore** for state management
 - **TailwindCSS v4** with DaisyUI and **Lucide** icons
-- **Vitest** for fast unit testing
+- **Vitest** for fast unit testing and **Playwright** for end-to-end
 
 ### Ultra-Secure Authentication
 - **HttpOnly + Secure cookies** for token storage (immune to XSS attacks)
@@ -242,20 +243,44 @@ pnpm build
 ### Testing
 
 ```bash
-# Run tests
+# Unit tests (Vitest)
 pnpm test
 
-# Run tests with UI
+# Unit tests with UI
 pnpm test:ui
 
-# Generate coverage report
+# Coverage with the thresholds CI enforces
 pnpm test:coverage
+
+# End-to-end tests (Playwright)
+pnpm e2e
+
+# Playwright in interactive mode
+pnpm e2e:ui
+
+# Open the report of the last run
+pnpm e2e:report
 ```
 
-The suite covers the three SignalStores, the CSRF interceptor and both guards —
-100% of lines and functions over the exercised code. `src/setup-vitest.ts` boots the
+**95 unit tests** over the three SignalStores, the CSRF interceptor, both guards, the
+`safe-*` pipes, `SeoService`, `RouterStateService`, `NotifyService`, cookie utilities
+and the four pages — 98% of statements, 99.6% of lines. `src/setup-vitest.ts` boots the
 TestBed in zoneless mode, which is required here: the project has no `zone.js`
 dependency at all.
+
+**32 end-to-end tests** in `e2e/`, on a desktop and a mobile viewport, covering the
+login flows, the landing page, theme and language persistence across a reload, and the
+404. API responses are intercepted with `page.route`, so the auth paths run without a
+backend. The first run on a new machine needs the browsers:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+Both suites earn their keep. The end-to-end ones found two defects that were invisible
+to unit tests and to reading the code: the store never validated the session at
+startup, and the CSRF token was being wiped between the two startup requests, so every
+login went out without its header.
 
 ### Code Quality
 
@@ -278,7 +303,8 @@ pnpm lint:ci
 `.github/workflows/ci.yml` runs on every push to `main` and on every pull request:
 
 - **Lint & format** — `biome ci`, which verifies without rewriting files
-- **Test** — the Vitest suite on Node 22 and Node 24
+- **Test** — the Vitest suite on Node 22 and Node 24, with coverage thresholds
+- **End-to-end** — the Playwright suite, uploading its report as an artifact
 - **Production build** — `pnpm build`, uploading `dist/` as an artifact
 
 Concurrent runs on the same branch cancel the previous one, so a burst of pushes
