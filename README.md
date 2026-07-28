@@ -19,8 +19,9 @@ Everything described below is wired up and covered by tests — the template run
 | `/dashboard` | Protected route behind `authGuard`, redirecting with a `returnUrl` |
 | anything else | A real 404 page that keeps the attempted URL and marks itself `noindex` |
 
-Plus **42 tests** over the three stores, the CSRF interceptor and both guards, and a
-**GitHub Actions workflow** running lint, tests (Node 22 and 24) and a production build.
+Plus **95 unit tests** and **32 end-to-end tests**, and a **GitHub Actions workflow**
+running lint, the unit suite on Node 22 and 24, the end-to-end suite and a production
+build.
 
 ## Key Features
 
@@ -31,7 +32,7 @@ Plus **42 tests** over the three stores, the CSRF interceptor and both guards, a
 - **Signal-based reactivity** throughout the application
 - **NgRx SignalStore** for state management
 - **TailwindCSS v4** with DaisyUI and **Lucide** icons
-- **Vitest** for fast unit testing
+- **Vitest** for fast unit testing and **Playwright** for end-to-end
 
 ### Ultra-Secure Authentication
 - **HttpOnly + Secure cookies** for token storage (immune to XSS attacks)
@@ -250,20 +251,44 @@ pnpm build
 ### Testing
 
 ```bash
-# Run tests
+# Unit tests (Vitest)
 pnpm test
 
-# Run tests with UI
+# Unit tests with UI
 pnpm test:ui
 
-# Generate coverage report
+# Coverage with the thresholds CI enforces
 pnpm test:coverage
+
+# End-to-end tests (Playwright)
+pnpm e2e
+
+# Playwright in interactive mode
+pnpm e2e:ui
+
+# Open the report of the last run
+pnpm e2e:report
 ```
 
-The suite covers the three SignalStores, the CSRF interceptor and both guards —
-100% of lines and functions over the exercised code. `src/setup-vitest.ts` boots the
+**95 unit tests** over the three SignalStores, the CSRF interceptor, both guards, the
+`safe-*` pipes, `SeoService`, `RouterStateService`, `NotifyService`, cookie utilities
+and the four pages — 98% of statements, 99.6% of lines. `src/setup-vitest.ts` boots the
 TestBed in zoneless mode, which is required here: the project has no `zone.js`
 dependency at all.
+
+**32 end-to-end tests** in `e2e/`, on a desktop and a mobile viewport, covering the
+login flows, the landing page, theme and language persistence across a reload, and the
+404. API responses are intercepted with `page.route`, so the auth paths run without a
+backend. The first run on a new machine needs the browsers:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+Both suites earn their keep. The end-to-end ones found two defects that were invisible
+to unit tests and to reading the code: the store never validated the session at
+startup, and the CSRF token was being wiped between the two startup requests, so every
+login went out without its header.
 
 ### Code Quality
 
@@ -286,7 +311,8 @@ pnpm lint:ci
 `.github/workflows/ci.yml` runs on every push to `main` and on every pull request:
 
 - **Lint & format** — `biome ci`, which verifies without rewriting files
-- **Test** — the Vitest suite on Node 22 and Node 24
+- **Test** — the Vitest suite on Node 22 and Node 24, with coverage thresholds
+- **End-to-end** — the Playwright suite, uploading its report as an artifact
 - **Production build** — `pnpm build`, uploading `dist/` as an artifact
 
 Concurrent runs on the same branch cancel the previous one, so a burst of pushes
@@ -532,6 +558,50 @@ this.themeStore.setTheme(Themes.Dark);
 - ✅ Comprehensive error handling
 - ✅ Clear documentation
 - ✅ CI on every pull request
+
+## Rendering: this is a client-side app, on purpose
+
+**No SSR, no prerendering.** The bundle loads, Angular boots, and everything renders in
+the browser. Saying it outright, because the template does invest in SEO — a title and
+description per route, `noindex` on the 404 — and that combination invites the
+assumption that something serves HTML. Nothing does.
+
+The reason is that three of the pieces here are browser-only, and each would need work
+before a server render:
+
+- **Notiflix** (`NotifyService`) touches `document` on import.
+- **`@vercel/speed-insights`** is a browser beacon.
+- **Theme and language** are read from cookies during app init, and on the server that
+  means reading the request rather than `document.cookie`.
+
+Authentication, by contrast, would survive it: HttpOnly cookies travel on the request.
+
+What CSR costs you: crawlers that do not execute JavaScript see an empty shell, and the
+first paint waits for the bundle. For an app behind a login — which is what the auth
+setup here points at — neither matters much. For a public, content-heavy site, it does.
+
+If you need SSR, `ng add @angular/ssr` is the starting point, and the three items above
+are the work it will surface. It is deliberately not wired up here: a template that
+half-supports server rendering is worse than one that clearly does not.
+
+## Removing what you don't need
+
+A template earns its keep by being easy to cut down. Each piece below comes out cleanly,
+and the test suite tells you immediately if you missed a thread.
+
+| Don't need | Remove |
+|---|---|
+| **i18n** | `@ngx-translate/*` and `src/assets/i18n/`; drop `provideTranslateService`/`provideTranslateHttpLoader` from `app.config.ts`, `LanguageStore`, and the `translate` pipes in templates. `initRouterSeoUpdates` waits for translations, so simplify it to read route `data` directly. |
+| **Notifications** | `notiflix`, `core/services/notify.service.ts` and its two call sites (the interceptor's 401 branch and `dashboard.page.ts`). |
+| **Authentication** | `core/stores/auth.store.ts`, `core/guards/`, `core/interceptors/auth.interceptor.ts`, `features/auth/`, `features/dashboard/`, and the auth wiring in `app.config.ts`. Keep the interceptor if you still want `withCredentials` everywhere. |
+| **Theming** | `daisyui`, the theme blocks in `styles.scss`, `ThemeStore` and the navbar toggle. TailwindCSS stays. |
+| **Analytics** | `@vercel/speed-insights` and the `injectSpeedInsights()` call in `src/main.ts`. |
+| **The landing page** | `features/home/` whole, then point `path: ''` at your own entry route. |
+| **End-to-end tests** | `@playwright/test`, `playwright.config.ts`, `e2e/`, the `e2e:*` scripts and the `End-to-end` job in `.github/workflows/ci.yml`. |
+| **The `safe-*` pipes** | `core/pipes/`. They sanitise HTML and URLs through Angular's sanitizer; keep them if you ever render user-supplied markup. |
+
+After cutting, run `pnpm lint && pnpm test && pnpm build`. Unused imports are lint
+errors here, so leftovers surface on the spot.
 
 ## Notes and known limitations
 
