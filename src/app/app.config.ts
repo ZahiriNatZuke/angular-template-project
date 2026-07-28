@@ -23,6 +23,7 @@ import {
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { LanguageStore } from '@core/stores/language.store';
 import { ThemeStore } from '@core/stores/theme.store';
+import { initRouteFocusManagement } from '@core/utils/route-focus.init';
 import { initRouterSeoUpdates } from '@core/utils/router-seo.init';
 import { environment } from '@environments/environment';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -60,6 +61,7 @@ export const appConfig: ApplicationConfig = {
 			inject(LanguageStore);
 			inject(ThemeStore);
 			initRouterSeoUpdates();
+			initRouteFocusManagement();
 		}),
 		{
 			provide: DATE_PIPE_DEFAULT_OPTIONS,
