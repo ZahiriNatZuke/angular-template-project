@@ -21,6 +21,9 @@
 		"login": "Iniciar sesión",
 		"dashboard": "Panel"
 	},
+	"a11y": {
+		"skipToContent": "Saltar al contenido"
+	},
 	"notFound": {
 		"title": "Esta página no existe",
 		"description": "Puede que el enlace esté desactualizado o que la dirección tenga una errata. No has roto nada.",

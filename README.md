@@ -64,6 +64,14 @@ Plus **42 tests** over the three stores, the CSRF interceptor and both guards, a
 - Dynamic title and description per route
 - Waits for translations to load before applying SEO tags
 
+### Accessibility
+- **Skip link** as the first tab stop, so reaching the content by keyboard does not
+  mean walking through the whole navbar on every page
+- **Focus moved to the main landmark on each navigation** — a single-page app does not
+  do this on its own, so a screen reader never announces that the page changed
+- Semantic landmarks (`header`, `main`, `footer`) in the shell
+- Covered by end-to-end tests: focus behaviour is only observable in a real browser
+
 ### Developer Experience
 - **Biome** for ultra-fast linting and formatting
 - **Husky** pre-commit hooks for code quality
