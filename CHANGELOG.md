@@ -9,6 +9,27 @@ absorb by copying files across.
 
 ## [Unreleased]
 
+### Added
+
+- **The technology stack links to documentation.** Every tool in the four groups is now a
+  link to its official docs, opening in a new tab. Their versions are read from
+  `package.json` rather than typed by hand — this same landing page advertised "42 tests"
+  long after they were something else, and a stale version on a template's own page is
+  worse than no version at all. A test pins them against the manifest so they cannot drift
+  again.
+- **Two sections that argue the case for the template**: what it adds to a fresh `ng new`
+  across eight concerns, and the five worst bugs it used to have, each with its root cause.
+  A template that only lists features says nothing about the mistakes it already made for
+  you.
+- The version in the footer links to that release's notes, and the licence to the `LICENSE`
+  file.
+
+### Fixed
+
+- **`NG0956` on every language switch.** The four bullets in the state section were tracked
+  by identity, and since their text changes entirely when translated, Angular destroyed and
+  recreated the whole list. They now track by index, which is that list's real identity.
+
 ## [2.1.0]
 
 Everything the 2.0.0 release advertised, now actually working — plus the repository
