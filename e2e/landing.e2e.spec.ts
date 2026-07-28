@@ -1,4 +1,31 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
+
+/**
+ * Baja la página a pantallazos hasta que aparece un selector.
+ *
+ * Tiene que ser progresivo, y no un salto al pie: las secciones de abajo van en
+ * bloques `@defer (on viewport)`, y de un salto al final del documento las
+ * intermedias no llegan a pasar por el viewport, así que su disparador nunca se
+ * cumple. Además, cada bloque que se resuelve hace **crecer** la página.
+ */
+const scrollUntilVisible = async (page: Page, selector: string) => {
+	await expect
+		.poll(
+			async () => {
+				await page.evaluate(() =>
+					window.scrollBy(0, Math.round(window.innerHeight * 0.75))
+				);
+				return page.locator(selector).count();
+			},
+			{
+				message: `${selector} debería cargarse al bajar`,
+				timeout: 15_000,
+			}
+		)
+		.toBeGreaterThan(0);
+
+	await expect(page.locator(selector)).toBeVisible();
+};
 
 test.describe('Landing', () => {
 	test.beforeEach(async ({ page }) => {
@@ -7,7 +34,9 @@ test.describe('Landing', () => {
 
 	test('renderiza las secciones principales', async ({ page }) => {
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-		await expect(page.locator('section')).toHaveCount(5);
+		// Siete bloques: hero y estado, más los cinco que se difieren, que en este
+		// momento son sus `@placeholder`.
+		await expect(page.locator('section')).toHaveCount(7);
 
 		// Las tarjetas de la comparativa también son `article` pero están ocultas
 		// en escritorio, así que se filtra por visibilidad en lugar de contar
@@ -62,6 +91,37 @@ test.describe('Landing', () => {
 		await expect(heroTitle).toHaveText(after ?? '');
 	});
 
+	test('cada herramienta del stack enlaza a su documentación en otra pestaña', async ({
+		page,
+	}) => {
+		// La sección va diferida, así que primero hay que llegar a ella.
+		await scrollUntilVisible(page, 'app-tech-stack');
+
+		const links = page.locator('app-tech-stack dd li a');
+		const total = await links.count();
+		expect(total).toBeGreaterThanOrEqual(12);
+
+		for (let index = 0; index < total; index += 1) {
+			const link = links.nth(index);
+
+			await expect(link).toHaveAttribute('href', /^https:\/\//);
+			await expect(link).toHaveAttribute('target', '_blank');
+			// Sin `noopener` la pestaña nueva puede manipular esta.
+			await expect(link).toHaveAttribute('rel', /noopener/);
+		}
+	});
+
+	test('la versión del pie enlaza a las notas de ese release', async ({
+		page,
+	}) => {
+		const version = page.locator('footer a[href*="/releases/tag/"]');
+
+		// La versión sale del `package.json`, así que el enlace apunta siempre a lo
+		// que está corriendo sin que nadie lo actualice a mano.
+		await expect(version).toHaveAttribute('href', /\/releases\/tag\/v\d+\.\d+/);
+		await expect(version).toHaveText(/v\d+\.\d+\.\d+/);
+	});
+
 	test('las secciones diferidas se cargan al llegar a ellas', async ({
 		page,
 	}) => {
@@ -79,7 +139,11 @@ test.describe('Landing', () => {
 			.scrollIntoViewIfNeeded();
 		await expect(comparison).toBeVisible();
 
-		await page.locator('footer').scrollIntoViewIfNeeded();
+		// Las dos secciones que argumentan el valor de la plantilla van diferidas
+		// igual, y quedan por el camino hasta el stack, que es la última.
+		await scrollUntilVisible(page, 'app-vs-ng-new');
+		await scrollUntilVisible(page, 'app-proven-fixes');
+		await scrollUntilVisible(page, 'app-tech-stack');
 		await expect(stack).toBeVisible();
 	});
 

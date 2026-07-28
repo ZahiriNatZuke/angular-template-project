@@ -65,6 +65,17 @@
       {{ 'home.footer.madeBy' | translate }}
       <a [href]="authorUrl()" target="_blank" rel="noopener" class="link link-primary font-medium">&#64;ZahiriNatZuke</a>
     </p>
-    <p class="text-sm opacity-70 font-medium">{{ 'home.footer.license' | translate }} • {{ 'home.footer.version' | translate }} {{ version() }}</p>
+    <p class="text-sm opacity-70 font-medium">
+      <a [href]="repoUrl() + '/blob/main/LICENSE'" target="_blank" rel="noopener" class="link link-hover">
+        {{ 'home.footer.license' | translate }}
+      </a>
+      •
+      {{ 'home.footer.version' | translate }}
+      <!-- La versión sale del `package.json` y el enlace lleva a las notas de ese
+           mismo release, sin nada que mantener a mano. -->
+      <a [href]="releaseUrl()" target="_blank" rel="noopener" class="link link-hover font-mono">
+        v{{ version() }}
+      </a>
+    </p>
   </div>
 </footer>

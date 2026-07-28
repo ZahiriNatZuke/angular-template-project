@@ -168,8 +168,90 @@
 				"description": "Unit tests over stores, interceptor, guards and pages, plus end-to-end flows in a real browser, running on Node 22 and 24."
 			}
 		},
+		"vsNew": {
+			"eyebrow": "Why not start from scratch",
+			"title": "What this adds to a fresh ng new",
+			"description": "The Angular CLI gives you a working app. Everything below is what you would end up writing yourself, and the order in which you would discover you needed it.",
+			"table": {
+				"aspect": "Concern",
+				"cli": "ng new",
+				"template": "This template"
+			},
+			"rows": {
+				"state": {
+					"aspect": "State management",
+					"cli": "Nothing. You pick and wire it up",
+					"template": "Three SignalStores in use, and a pattern to copy"
+				},
+				"auth": {
+					"aspect": "Authentication",
+					"cli": "Nothing",
+					"template": "HttpOnly cookies, CSRF on mutations, guards, a login page and a protected route"
+				},
+				"i18n": {
+					"aspect": "Internationalization",
+					"cli": "@angular/localize, build-time locales",
+					"template": "Runtime language switching, with SEO that waits for the translations"
+				},
+				"theming": {
+					"aspect": "Theming",
+					"cli": "An empty stylesheet",
+					"template": "Light and dark themes, system preference, persisted across reloads"
+				},
+				"seo": {
+					"aspect": "SEO",
+					"cli": "One static index.html",
+					"template": "Title and description per route, and noindex where it belongs"
+				},
+				"testing": {
+					"aspect": "Testing",
+					"cli": "Karma or Vitest, and zero tests",
+					"template": "A unit suite with enforced coverage plus end-to-end flows in a real browser"
+				},
+				"ci": {
+					"aspect": "CI",
+					"cli": "Nothing",
+					"template": "Lint, tests on two Node versions, end-to-end, build, CodeQL and grouped dependency updates"
+				},
+				"a11y": {
+					"aspect": "Accessibility",
+					"cli": "Nothing beyond the defaults",
+					"template": "Focus moved on navigation, a skip link and semantic landmarks"
+				}
+			}
+		},
+		"proven": {
+			"eyebrow": "Honesty",
+			"title": "Bugs this template no longer has",
+			"description": "Every one of these was real, and shipped. They are here because a template that only lists features tells you nothing about the mistakes it already made for you.",
+			"cases": {
+				"csrf": {
+					"symptom": "Every login went out without its CSRF header, so a backend that validated CSRF would reject the first mutation of each session.",
+					"cause": "Startup asked for the token and the session at once, and the ordinary 401 of an anonymous visitor reset the state — wiping the token that had just arrived."
+				},
+				"startup": {
+					"symptom": "The advertised \"session validation on startup\" had never run once.",
+					"cause": "The store did HTTP while being constructed, and those requests pass through the interceptor that injects that same store. Angular aborted with a circular dependency and the requests never left the browser."
+				},
+				"guards": {
+					"symptom": "Reloading inside a protected route threw out users whose session was perfectly valid.",
+					"cause": "The guard decided before the session check had resolved. Both guards now wait for it."
+				},
+				"router": {
+					"symptom": "The router did nothing. Adding a second route would not have worked.",
+					"cause": "The bootstrap component was registered as a route component, and its template had no router outlet: the landing rendered because it was embedded in the shell."
+				},
+				"theme": {
+					"symptom": "The theme was never applied — the site showed daisyUI's defaults.",
+					"cause": "The stylesheet declared it with v4 variable names on a v5 install, which had renamed them all. Dead code from top to bottom."
+				}
+			},
+			"note": "All of them are written up, with their root cause, in the changelog."
+		},
 		"stack": {
 			"title": "Technology stack",
+			"description": "Every tool links to its official documentation. Versions come from this project's package.json, so what you read here is what is installed.",
+			"versionsNote": "Versions are read from package.json at build time — nothing here is typed by hand.",
 			"groups": {
 				"framework": "Framework",
 				"state": "State & i18n",

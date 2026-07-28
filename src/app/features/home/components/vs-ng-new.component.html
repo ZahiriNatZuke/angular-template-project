@@ -1,0 +1,76 @@
+<section class="border-b border-base-300 py-20 px-4">
+  <div class="mx-auto max-w-5xl">
+    <div class="mb-10 text-center">
+      <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
+        {{ 'home.vsNew.eyebrow' | translate }}
+      </p>
+      <h2 class="mb-4 text-3xl md:text-4xl font-semibold tracking-tight">
+        {{ 'home.vsNew.title' | translate }}
+      </h2>
+      <p class="mx-auto max-w-2xl text-base-content/70 leading-relaxed">
+        {{ 'home.vsNew.description' | translate }}
+      </p>
+    </div>
+
+    <!-- Igual que la comparativa de autenticación: tres columnas no caben en un
+         móvil, así que por debajo de `md` la misma información se apila. -->
+    <div class="hidden rounded-box border border-base-300 bg-base-100 md:block">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="w-1/4">{{ 'home.vsNew.table.aspect' | translate }}</th>
+            <th>
+              <span class="flex items-center gap-2">
+                <svg aria-hidden="true" lucideMinus class="size-4 text-base-content/40"></svg>
+                {{ 'home.vsNew.table.cli' | translate }}
+              </span>
+            </th>
+            <th>
+              <span class="flex items-center gap-2">
+                <svg aria-hidden="true" lucideCheck class="size-4 text-success"></svg>
+                {{ 'home.vsNew.table.template' | translate }}
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row) {
+            <tr>
+              <td class="font-medium">{{ 'home.vsNew.rows.' + row + '.aspect' | translate }}</td>
+              <td class="text-base-content/60">{{ 'home.vsNew.rows.' + row + '.cli' | translate }}</td>
+              <td class="text-base-content/80">{{ 'home.vsNew.rows.' + row + '.template' | translate }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid gap-3 md:hidden">
+      @for (row of rows(); track row) {
+        <article class="rounded-box border border-base-300 bg-base-100 p-4">
+          <h3 class="mb-3 font-semibold">{{ 'home.vsNew.rows.' + row + '.aspect' | translate }}</h3>
+
+          <div class="mb-3">
+            <p class="mb-1 flex items-center gap-2 text-sm font-medium">
+              <svg aria-hidden="true" lucideMinus class="size-4 shrink-0 text-base-content/40"></svg>
+              {{ 'home.vsNew.table.cli' | translate }}
+            </p>
+            <p class="pl-6 text-sm text-base-content/60">
+              {{ 'home.vsNew.rows.' + row + '.cli' | translate }}
+            </p>
+          </div>
+
+          <div>
+            <p class="mb-1 flex items-center gap-2 text-sm font-medium">
+              <svg aria-hidden="true" lucideCheck class="size-4 shrink-0 text-success"></svg>
+              {{ 'home.vsNew.table.template' | translate }}
+            </p>
+            <p class="pl-6 text-sm text-base-content/80">
+              {{ 'home.vsNew.rows.' + row + '.template' | translate }}
+            </p>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

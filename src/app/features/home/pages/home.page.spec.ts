@@ -32,10 +32,10 @@ describe('HomePage', () => {
 		const sections =
 			harness.routeNativeElement?.querySelectorAll('section') ?? [];
 
-		// Cinco bloques, contando los dos `@placeholder`: son `section` con la
+		// Siete bloques, contando los cuatro `@placeholder`: son `section` con la
 		// misma altura reservada que el contenido que sustituyen, así que la página
 		// no salta cuando el bloque diferido se resuelve.
-		expect(sections.length).toBe(5);
+		expect(sections.length).toBe(7);
 	});
 
 	it('renderiza una tarjeta por característica', () => {
@@ -44,26 +44,36 @@ describe('HomePage', () => {
 		expect(cards.length).toBe(page.features().length);
 	});
 
+	/** Los cuatro bloques `@defer` de la landing, por su selector. */
+	const DEFERRED = [
+		'app-auth-comparison',
+		'app-vs-ng-new',
+		'app-proven-fixes',
+		'app-tech-stack',
+	];
+
 	it('no trae el contenido diferido en el render inicial', () => {
 		const root = harness.routeNativeElement;
 
 		// Lo que se difiere no está en el DOM hasta que su disparador se cumple.
-		expect(root?.querySelector('app-auth-comparison')).toBeNull();
-		expect(root?.querySelector('app-tech-stack')).toBeNull();
+		for (const selector of DEFERRED) {
+			expect(root?.querySelector(selector)).toBeNull();
+		}
 		expect(root?.querySelector('table')).toBeNull();
 	});
 
 	it('resuelve los bloques diferidos con su contenido real', async () => {
 		const blocks = await harness.fixture.getDeferBlocks();
-		expect(blocks.length).toBe(2);
+		expect(blocks.length).toBe(DEFERRED.length);
 
 		for (const block of blocks) {
 			await block.render(DeferBlockState.Complete);
 		}
 
 		const root = harness.routeNativeElement;
-		expect(root?.querySelector('app-auth-comparison')).not.toBeNull();
-		expect(root?.querySelector('app-tech-stack')).not.toBeNull();
+		for (const selector of DEFERRED) {
+			expect(root?.querySelector(selector)).not.toBeNull();
+		}
 		expect(root?.querySelector('table')).not.toBeNull();
 	});
 

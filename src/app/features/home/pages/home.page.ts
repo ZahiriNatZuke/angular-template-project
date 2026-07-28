@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { AuthComparisonComponent } from '@app/features/home/components/auth-comparison.component';
+import { ProvenFixesComponent } from '@app/features/home/components/proven-fixes.component';
 import { TechStackComponent } from '@app/features/home/components/tech-stack.component';
+import { VsNgNewComponent } from '@app/features/home/components/vs-ng-new.component';
 import { AngularLogoComponent } from '@core/components/angular-logo.component';
 import { APP_LINKS } from '@core/utils/app-links';
 import {
@@ -38,6 +40,8 @@ interface Feature {
 		// Se usan solo dentro de bloques `@defer`, así que el compilador los saca
 		// del bundle inicial y les genera un chunk aparte.
 		AuthComparisonComponent,
+		VsNgNewComponent,
+		ProvenFixesComponent,
 		TechStackComponent,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,

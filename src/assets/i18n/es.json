@@ -168,8 +168,90 @@
 				"description": "Tests unitarios sobre stores, interceptor, guards y páginas, más flujos de punta a punta en un navegador real, ejecutándose en Node 22 y 24."
 			}
 		},
+		"vsNew": {
+			"eyebrow": "Por qué no empezar de cero",
+			"title": "Qué añade esto a un ng new recién hecho",
+			"description": "El CLI de Angular te da una aplicación que funciona. Todo lo de abajo es lo que acabarías escribiendo por tu cuenta, y el orden en que descubrirías que te hacía falta.",
+			"table": {
+				"aspect": "Asunto",
+				"cli": "ng new",
+				"template": "Esta plantilla"
+			},
+			"rows": {
+				"state": {
+					"aspect": "Gestión de estado",
+					"cli": "Nada. Eliges y conectas tú",
+					"template": "Tres SignalStores en uso y un patrón que copiar"
+				},
+				"auth": {
+					"aspect": "Autenticación",
+					"cli": "Nada",
+					"template": "Cookies HttpOnly, CSRF en las mutaciones, guards, una pantalla de login y una ruta protegida"
+				},
+				"i18n": {
+					"aspect": "Internacionalización",
+					"cli": "@angular/localize, idiomas en tiempo de compilación",
+					"template": "Cambio de idioma en caliente, con SEO que espera a las traducciones"
+				},
+				"theming": {
+					"aspect": "Temas",
+					"cli": "Una hoja de estilos vacía",
+					"template": "Tema claro y oscuro, preferencia del sistema y persistencia entre recargas"
+				},
+				"seo": {
+					"aspect": "SEO",
+					"cli": "Un index.html estático",
+					"template": "Título y descripción por ruta, y noindex donde toca"
+				},
+				"testing": {
+					"aspect": "Tests",
+					"cli": "Karma o Vitest, y cero tests",
+					"template": "Suite unitaria con umbrales de cobertura más flujos de punta a punta en un navegador real"
+				},
+				"ci": {
+					"aspect": "CI",
+					"cli": "Nada",
+					"template": "Lint, tests en dos versiones de Node, E2E, build, CodeQL y actualizaciones de dependencias agrupadas"
+				},
+				"a11y": {
+					"aspect": "Accesibilidad",
+					"cli": "Nada más allá de lo que trae el navegador",
+					"template": "Foco que se mueve al navegar, enlace de salto y landmarks semánticos"
+				}
+			}
+		},
+		"proven": {
+			"eyebrow": "Honestidad",
+			"title": "Fallos que esta plantilla ya no tiene",
+			"description": "Todos fueron reales y estuvieron publicados. Están aquí porque una plantilla que solo enumera características no te dice nada de los errores que ya cometió por ti.",
+			"cases": {
+				"csrf": {
+					"symptom": "Cada login salía sin su cabecera CSRF, así que un backend que validara CSRF habría rechazado la primera mutación de cada sesión.",
+					"cause": "El arranque pedía el token y la sesión a la vez, y el 401 normal de un visitante anónimo reseteaba el estado, borrando el token que acababa de llegar."
+				},
+				"startup": {
+					"symptom": "La «validación de sesión al arrancar» que se anunciaba no se había ejecutado ni una vez.",
+					"cause": "El store hacía HTTP mientras se construía, y esas peticiones pasan por el interceptor que inyecta ese mismo store. Angular abortaba por dependencia circular y las peticiones no salían del navegador."
+				},
+				"guards": {
+					"symptom": "Recargar dentro de una ruta protegida expulsaba a usuarios con la sesión perfectamente válida.",
+					"cause": "El guard decidía antes de que la comprobación de sesión hubiera terminado. Ahora los dos la esperan."
+				},
+				"router": {
+					"symptom": "El router no hacía nada. Añadir una segunda ruta no habría funcionado.",
+					"cause": "El componente de arranque estaba registrado como componente de ruta y su plantilla no tenía router outlet: la landing se veía por estar embebida en el shell."
+				},
+				"theme": {
+					"symptom": "El tema nunca se aplicaba: el sitio mostraba los colores por defecto de daisyUI.",
+					"cause": "La hoja de estilos lo definía con los nombres de variables de la v4 sobre una v5, que los había renombrado todos. Código muerto de arriba abajo."
+				}
+			},
+			"note": "Todos están documentados, con su causa raíz, en el changelog."
+		},
 		"stack": {
 			"title": "Stack tecnológico",
+			"description": "Cada herramienta enlaza a su documentación oficial. Las versiones salen del package.json de este proyecto, así que lo que lees aquí es lo que está instalado.",
+			"versionsNote": "Las versiones se leen del package.json al compilar: aquí no hay nada escrito a mano.",
 			"groups": {
 				"framework": "Framework",
 				"state": "Estado e i18n",

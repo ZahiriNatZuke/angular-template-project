@@ -73,7 +73,11 @@
 
       <ul class="space-y-3">
         @let statePoints = 'home.state.points' | translate;
-        @for (point of statePoints; track point) {
+        <!-- `track $index` y no el texto: al cambiar de idioma cambian los cuatro
+             valores a la vez, así que seguirlos por identidad hacía que Angular
+             destruyera y recreara la lista entera y avisara con NG0956. La
+             posición sí es estable. -->
+        @for (point of statePoints; track $index) {
           <li class="flex items-start gap-3">
             <svg aria-hidden="true" lucideCheck class="mt-0.5 size-5 shrink-0 text-primary"></svg>
             <span class="text-base-content/80">{{ point }}</span>
@@ -148,6 +152,22 @@
     </div>
   </div>
 </section>
+
+<!-- ── Qué añade sobre `ng new` ───────────────────────────────────────────── -->
+<!-- La única pregunta que de verdad importa al mirar un template. Diferida como
+     las demás secciones de abajo. -->
+@defer (on viewport; prefetch on idle) {
+  <app-vs-ng-new />
+} @placeholder {
+  <section class="min-h-[32rem] border-b border-base-300 py-20 px-4"></section>
+}
+
+<!-- ── Fallos que ya no tiene ─────────────────────────────────────────────── -->
+@defer (on viewport; prefetch on idle) {
+  <app-proven-fixes />
+} @placeholder {
+  <section class="min-h-[32rem] border-b border-base-300 bg-base-200 py-20 px-4"></section>
+}
 
 <!-- ── Stack ──────────────────────────────────────────────────────────────── -->
 <!-- Lo último de la página: se difiere por el mismo motivo. -->
