@@ -19,9 +19,9 @@ Everything described below is wired up and covered by tests — the template run
 | `/dashboard` | Protected route behind `authGuard`, redirecting with a `returnUrl` |
 | anything else | A real 404 page that keeps the attempted URL and marks itself `noindex` |
 
-Plus **95 unit tests** and **32 end-to-end tests**, and a **GitHub Actions workflow**
-running lint, the unit suite on Node 22 and 24, the end-to-end suite and a production
-build.
+Plus a **unit suite with enforced coverage thresholds**, an **end-to-end suite** on two
+viewports, and a **GitHub Actions workflow** running lint, the unit tests on Node 22 and
+24, the end-to-end tests, a production build and CodeQL.
 
 ## Key Features
 
@@ -270,16 +270,19 @@ pnpm e2e:ui
 pnpm e2e:report
 ```
 
-**95 unit tests** over the three SignalStores, the CSRF interceptor, both guards, the
-`safe-*` pipes, `SeoService`, `RouterStateService`, `NotifyService`, cookie utilities
-and the four pages — 98% of statements, 99.6% of lines. `src/setup-vitest.ts` boots the
-TestBed in zoneless mode, which is required here: the project has no `zone.js`
-dependency at all.
+The **unit suite** covers the three SignalStores, the CSRF interceptor, both guards, the
+`safe-*` pipes, `SeoService`, `RouterStateService`, `NotifyService`, cookie utilities,
+the landing sections and the four pages. Coverage thresholds are enforced in CI, so the
+numbers are checked by the machine rather than written down here — a count in a README
+is stale the day after it is typed, which is exactly what happened to this one twice.
+`src/setup-vitest.ts` boots the TestBed in zoneless mode, which is required here: the
+project has no `zone.js` dependency at all.
 
-**32 end-to-end tests** in `e2e/`, on a desktop and a mobile viewport, covering the
-login flows, the landing page, theme and language persistence across a reload, and the
-404. API responses are intercepted with `page.route`, so the auth paths run without a
-backend. The first run on a new machine needs the browsers:
+The **end-to-end suite** lives in `e2e/`, runs on a desktop and a mobile viewport, and
+covers the login flows, the landing page and its deferred sections, focus management,
+theme and language persistence across a reload, and the 404. API responses are
+intercepted with `page.route`, so the auth paths run without a backend. The first run on
+a new machine needs the browsers:
 
 ```bash
 pnpm exec playwright install chromium

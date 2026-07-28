@@ -331,6 +331,12 @@ this template ever had — the store never validating the session at startup, an
 CSRF token being wiped between two startup requests — were invisible to unit tests
 and to reading the code.
 
+**Do not write test counts, versions or any other moving number into prose.** The
+README and the landing page both advertised "42 tests" long after they were something
+else, and the README went stale again within a day of being corrected. Either derive
+the value — the landing reads versions from `package.json`, with a test pinning them to
+the manifest — or describe what is covered without counting it.
+
 ### Line Endings
 
 `.gitattributes` normalises everything to LF. Do not remove it: Biome formats to LF,
