@@ -1,0 +1,50 @@
+# Análisis estático de seguridad con CodeQL.
+#
+# El ruleset de `main` ya exigía code scanning con CodeQL para poder mezclar una
+# pull request, pero el workflow que lo produce no existía: sin ningún análisis, el
+# requisito no se podía satisfacer nunca y toda pull request quedaba bloqueada.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Las reglas de CodeQL se actualizan por su cuenta: un repositorio sin cambios
+  # puede pasar a tener un hallazgo nuevo. La ejecución semanal lo detecta.
+  schedule:
+    - cron: '30 6 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: codeql-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Necesario para publicar los resultados en la pestaña Security.
+      security-events: write
+      contents: read
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          # Un único lenguaje: el proyecto es TypeScript de punta a punta, y
+          # CodeQL analiza JavaScript y TypeScript en la misma pasada.
+          languages: javascript-typescript
+          # Incluye las consultas de calidad además de las de seguridad.
+          queries: security-and-quality
+
+      # No se compila el proyecto a propósito: para JavaScript y TypeScript
+      # CodeQL extrae el código sin construirlo, y el build ya lo cubre el CI.
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'

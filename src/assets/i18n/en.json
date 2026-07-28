@@ -21,6 +21,9 @@
 		"login": "Sign in",
 		"dashboard": "Dashboard"
 	},
+	"a11y": {
+		"skipToContent": "Skip to content"
+	},
 	"notFound": {
 		"title": "This page does not exist",
 		"description": "The link may be out of date, or the address may have a typo. Nothing was broken on your side.",

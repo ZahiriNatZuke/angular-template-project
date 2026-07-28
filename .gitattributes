@@ -1,0 +1,34 @@
+# Los finales de línea se normalizan a LF en el índice y se materializan como LF
+# en el working tree, en cualquier sistema operativo.
+#
+# Sin esto, en Windows con `core.autocrlf=true` el árbol se llena de CRLF y
+# Biome —que formatea a LF— marca como mal formateado *cada* fichero del
+# proyecto: `pnpm lint:ci` falla en local aunque el CI de Linux pase, y el hook
+# de pre-commit, que corre `biome check --fix`, reescribe el repo entero en cada
+# commit. Un template se clona en cualquier sistema, así que la regla va aquí y
+# no en la configuración personal de cada quien.
+* text=auto eol=lf
+
+# Scripts que solo ejecuta Windows: ahí CRLF sí es lo correcto.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binarios: Git no debe intentar normalizarlos nunca.
+*.avif binary
+*.eot binary
+*.gif binary
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.pdf binary
+*.png binary
+*.ttf binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+
+# Generado por pnpm: fuera de los diffs de revisión y de las estadísticas de
+# lenguaje del repositorio.
+pnpm-lock.yaml -diff linguist-generated=true
