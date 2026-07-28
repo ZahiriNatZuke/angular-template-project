@@ -21,6 +21,9 @@
 		"login": "Sign in",
 		"dashboard": "Dashboard"
 	},
+	"a11y": {
+		"skipToContent": "Skip to content"
+	},
 	"notify": {
 		"session": {
 			"expired": "Your session expired. Please sign in again.",
@@ -161,8 +164,8 @@
 				"description": "English and Spanish with reactive switching and SEO that waits for translations."
 			},
 			"testing": {
-				"title": "Vitest & CI",
-				"description": "42 tests over stores, interceptor and guards, running on Node 22 and 24."
+				"title": "Vitest, Playwright & CI",
+				"description": "Unit tests over stores, interceptor, guards and pages, plus end-to-end flows in a real browser, running on Node 22 and 24."
 			}
 		},
 		"stack": {
