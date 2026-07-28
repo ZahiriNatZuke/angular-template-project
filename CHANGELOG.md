@@ -44,16 +44,23 @@ absorb by copying files across.
 - **Loading a protected route directly bounced an authenticated user to the login page.**
   `authGuard` was evaluated before `checkAuth()` resolved. Both guards now wait on a new
   `isSessionChecked` flag before deciding.
-
-### Known issues
-
-- In a browser, the login `POST` goes out without the `X-CSRF-Token` header even after
-  `/auth/csrf` has answered — the token does not reach the store. The interceptor's own
-  logic is covered by unit tests; what remains to determine is whether the fault is in the
-  application or in how the end-to-end suite simulates CORS for a credentialed
-  cross-origin request. Tracked by a `test.fixme` in `e2e/auth.e2e.spec.ts`. If it is the
-  former, the first mutation of each session would be rejected by a backend that validates
-  CSRF.
+- **Every login went out without its `X-CSRF-Token` header.** Startup asks for
+  `/auth/csrf` and `/auth/me` at the same time, and `checkAuth()` reset its error branch
+  with `...initialState` — which includes `csrfToken: null`. So the ordinary 401 of an
+  anonymous visitor threw away the token that had just arrived, and the next mutation, the
+  login itself, travelled bare. A backend validating CSRF would have rejected the first
+  mutation of every session. The reset now goes to an `anonymousSession` shape that leaves
+  the token alone: the token belongs to the browser, not to the session. This was the
+  defect tracked as a known issue in the previous entry; the end-to-end test that found it
+  is no longer skipped.
+- **After logging out, the next login had a stale token.** `logout()` cleared
+  `csrfToken` and nothing asked for a new one, since `fetchCsrfToken()` only ran from
+  `provideAppInitializer` — so without a page reload the following mutation had no valid
+  token. Closing a session now requests a fresh one, which is also what a backend that
+  rotates the token on logout expects.
+- **The 401 exemption matched by substring.** `url.includes('/auth/me')` would also have
+  exempted a business endpoint such as `/api/users/auth/me`, silently keeping expired
+  sessions alive. It now compares the full URL.
 
 ### Fixed
 

@@ -142,16 +142,14 @@ test.describe('Autenticación', () => {
 		await expect(page).toHaveURL(/\/auth\/login/);
 	});
 
-	// PENDIENTE DE AISLAR. En navegador, el POST de login sale sin la cabecera
-	// `X-CSRF-Token` aunque `/auth/csrf` haya respondido y hayan pasado segundos:
-	// el token no llega al store. La lógica del interceptor sí está probada en
-	// `auth.interceptor.spec.ts` (POST/PUT/PATCH/DELETE), así que lo que falta
-	// por determinar es si el fallo está en la aplicación o en cómo se simula
-	// CORS para una petición con `withCredentials` hacia otro origen.
-	//
-	// Importa: si es lo primero, la primera mutación de cada sesión viajaría sin
-	// token y un backend que valide CSRF la rechazaría.
-	test.fixme('el interceptor adjunta el token CSRF en las mutaciones', async ({
+	// Este test estuvo en `fixme` mientras el fallo que destapó seguía sin
+	// aislar, y fue el que lo encontró: el store perdía el token porque
+	// `checkAuth` reseteaba con `...initialState` y el 401 normal de un anónimo
+	// borraba lo que `/auth/csrf` acababa de traer. El caso vive aquí y no solo
+	// en `auth.interceptor.spec.ts` precisamente por eso: en el unitario la
+	// cabecera se comprueba con el token ya puesto a mano, así que el bug estaba
+	// en la costura entre las dos peticiones del arranque, no en el interceptor.
+	test('el interceptor adjunta el token CSRF en las mutaciones', async ({
 		page,
 	}) => {
 		const { csrfServed } = await mockAuthApi(page);

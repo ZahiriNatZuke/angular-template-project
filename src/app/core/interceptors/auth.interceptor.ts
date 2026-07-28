@@ -1,6 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthStore } from '@core/stores/auth.store';
+import { environment } from '@environments/environment';
 import { catchError, throwError } from 'rxjs';
 
 /**
@@ -10,14 +11,19 @@ import { catchError, throwError } from 'rxjs';
  * `logout()` encima borraba el mensaje de error recién escrito.
  */
 const AUTH_ENDPOINTS = [
-	'/auth/login',
-	'/auth/me',
-	'/auth/csrf',
-	'/auth/logout',
+	`${environment.apiUrl}/auth/login`,
+	`${environment.apiUrl}/auth/me`,
+	`${environment.apiUrl}/auth/csrf`,
+	`${environment.apiUrl}/auth/logout`,
 ];
 
+/**
+ * Se compara la URL completa y no un fragmento: con `includes` un endpoint de
+ * negocio como `/api/users/auth/me` habría entrado también en la excepción y su
+ * 401 dejaría de cerrar la sesión.
+ */
 const isAuthEndpoint = (url: string) =>
-	AUTH_ENDPOINTS.some(endpoint => url.includes(endpoint));
+	AUTH_ENDPOINTS.includes(url.split('?')[0]);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 	const authStore = inject(AuthStore);

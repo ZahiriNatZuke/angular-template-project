@@ -49,6 +49,23 @@ const initialState: AuthState = {
 	isSessionChecked: false,
 };
 
+/**
+ * Los campos que describen «aquí no hay sesión», para volver a ellos sin
+ * arrastrar el resto del estado.
+ *
+ * Deliberadamente **no** incluye `csrfToken`: el token pertenece al navegador y
+ * no a la sesión. Resetear con `...initialState` lo ponía a `null`, y como el
+ * arranque pide `/auth/csrf` y `/auth/me` a la vez, el 401 normal de un usuario
+ * anónimo borraba el token que acababa de llegar. El siguiente POST —el login,
+ * justamente— salía sin la cabecera `X-CSRF-Token`.
+ */
+const anonymousSession = {
+	user: null,
+	isAuthenticated: false,
+	isLoading: false,
+	error: null,
+} satisfies Partial<AuthState>;
+
 export const AuthStore = signalStore(
 	{ providedIn: 'root' },
 	withState(initialState),
@@ -60,9 +77,10 @@ export const AuthStore = signalStore(
 		userRole: computed(() => store.user()?.role ?? ''),
 	})),
 
-	withMethods((store, http = inject(HttpClient), router = inject(Router)) => ({
-		// Fetch CSRF token (llamar en app init)
-		fetchCsrfToken: rxMethod<void>(
+	withMethods((store, http = inject(HttpClient), router = inject(Router)) => {
+		// Fetch CSRF token (llamar en app init). Se declara como constante, y no
+		// solo como propiedad del objeto, para poder reutilizarlo desde `logout`.
+		const fetchCsrfToken = rxMethod<void>(
 			pipe(
 				switchMap(() =>
 					http
@@ -78,123 +96,134 @@ export const AuthStore = signalStore(
 						)
 				)
 			)
-		),
+		);
 
-		// Login (backend retorna Set-Cookie con HttpOnly)
-		login: rxMethod<{
-			email: string;
-			password: string;
-			rememberMe: boolean;
-			/** Ruta a la que volver tras autenticarse; por defecto `/dashboard`. */
-			returnUrl?: string;
-		}>(
-			pipe(
-				tap(() => patchState(store, { isLoading: true, error: null })),
-				switchMap(({ email, password, rememberMe, returnUrl }) =>
-					http
-						.post<{ user: User }>(`${environment.apiUrl}/auth/login`, {
-							email,
-							password,
-							rememberMe,
-						})
-						.pipe(
+		/**
+		 * Cierra la sesión en el cliente y vuelve al login.
+		 *
+		 * Pide un token CSRF nuevo: un backend que rote el token al cerrar sesión
+		 * invalida el anterior, y sin esto la siguiente mutación —el próximo
+		 * login— viajaría con un token muerto o sin ninguno.
+		 */
+		const closeSession = () => {
+			patchState(store, { ...anonymousSession, isSessionChecked: true });
+			fetchCsrfToken();
+			router.navigate(['/auth/login']);
+		};
+
+		return {
+			fetchCsrfToken,
+
+			// Login (backend retorna Set-Cookie con HttpOnly)
+			login: rxMethod<{
+				email: string;
+				password: string;
+				rememberMe: boolean;
+				/** Ruta a la que volver tras autenticarse; por defecto `/dashboard`. */
+				returnUrl?: string;
+			}>(
+				pipe(
+					tap(() => patchState(store, { isLoading: true, error: null })),
+					switchMap(({ email, password, rememberMe, returnUrl }) =>
+						http
+							.post<{ user: User }>(`${environment.apiUrl}/auth/login`, {
+								email,
+								password,
+								rememberMe,
+							})
+							.pipe(
+								tapResponse({
+									next: ({ user }) => {
+										patchState(store, {
+											user,
+											isAuthenticated: true,
+											isLoading: false,
+											error: null,
+										});
+										router.navigateByUrl(returnUrl || '/dashboard');
+									},
+									error: (error: HttpErrorResponse) => {
+										patchState(store, {
+											isLoading: false,
+											error: error.message || 'Login failed',
+										});
+									},
+								})
+							)
+					)
+				)
+			),
+
+			// Logout (backend limpia cookies)
+			logout: rxMethod<void>(
+				pipe(
+					switchMap(() =>
+						http.post(`${environment.apiUrl}/auth/logout`, {}).pipe(
+							tapResponse({
+								next: () => {
+									closeSession();
+								},
+								error: () => {
+									// Even on error, clear local state
+									closeSession();
+								},
+							})
+						)
+					)
+				)
+			),
+
+			// Check auth status (llamar en app init)
+			checkAuth: rxMethod<void>(
+				pipe(
+					tap(() => patchState(store, { isLoading: true })),
+					switchMap(() =>
+						http.get<{ user: User }>(`${environment.apiUrl}/auth/me`).pipe(
 							tapResponse({
 								next: ({ user }) => {
 									patchState(store, {
 										user,
 										isAuthenticated: true,
 										isLoading: false,
-										error: null,
+										isSessionChecked: true,
 									});
-									router.navigateByUrl(returnUrl || '/dashboard');
 								},
-								error: (error: HttpErrorResponse) => {
+								error: () => {
+									// Sin `csrfToken`: el 401 de un usuario anónimo es la
+									// respuesta normal al arrancar y no debe tirar el token que
+									// `/auth/csrf` acaba de traer.
 									patchState(store, {
-										isLoading: false,
-										error: error.message || 'Login failed',
+										...anonymousSession,
+										isSessionChecked: true,
 									});
 								},
 							})
 						)
-				)
-			)
-		),
-
-		// Logout (backend limpia cookies)
-		logout: rxMethod<void>(
-			pipe(
-				switchMap(() =>
-					http.post(`${environment.apiUrl}/auth/logout`, {}).pipe(
-						tapResponse({
-							next: () => {
-								patchState(store, {
-									...initialState,
-									isSessionChecked: true,
-								});
-								router.navigate(['/auth/login']);
-							},
-							error: () => {
-								// Even on error, clear local state
-								patchState(store, {
-									...initialState,
-									isSessionChecked: true,
-								});
-								router.navigate(['/auth/login']);
-							},
-						})
 					)
 				)
-			)
-		),
+			),
 
-		// Check auth status (llamar en app init)
-		checkAuth: rxMethod<void>(
-			pipe(
-				tap(() => patchState(store, { isLoading: true })),
-				switchMap(() =>
-					http.get<{ user: User }>(`${environment.apiUrl}/auth/me`).pipe(
-						tapResponse({
-							next: ({ user }) => {
-								patchState(store, {
-									user,
-									isAuthenticated: true,
-									isLoading: false,
-									isSessionChecked: true,
-								});
-							},
-							error: () => {
-								patchState(store, {
-									...initialState,
-									isLoading: false,
-									isSessionChecked: true,
-								});
-							},
-						})
+			// Refresh user data
+			refreshUser: rxMethod<void>(
+				pipe(
+					switchMap(() =>
+						http.get<{ user: User }>(`${environment.apiUrl}/auth/me`).pipe(
+							tapResponse({
+								next: ({ user }) => patchState(store, { user }),
+								error: (error: HttpErrorResponse) =>
+									patchState(store, {
+										error: error.message || 'Failed to refresh user data',
+									}),
+							})
+						)
 					)
 				)
-			)
-		),
+			),
 
-		// Refresh user data
-		refreshUser: rxMethod<void>(
-			pipe(
-				switchMap(() =>
-					http.get<{ user: User }>(`${environment.apiUrl}/auth/me`).pipe(
-						tapResponse({
-							next: ({ user }) => patchState(store, { user }),
-							error: (error: HttpErrorResponse) =>
-								patchState(store, {
-									error: error.message || 'Failed to refresh user data',
-								}),
-						})
-					)
-				)
-			)
-		),
-
-		// Clear error
-		clearError: () => patchState(store, { error: null }),
-	}))
+			// Clear error
+			clearError: () => patchState(store, { error: null }),
+		};
+	})
 );
 
 /*
