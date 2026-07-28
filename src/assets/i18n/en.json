@@ -24,6 +24,15 @@
 	"a11y": {
 		"skipToContent": "Skip to content"
 	},
+	"notify": {
+		"session": {
+			"expired": "Your session expired. Please sign in again.",
+			"closed": "You signed out."
+		},
+		"clipboard": {
+			"failed": "Could not copy. Select the command and copy it by hand."
+		}
+	},
 	"notFound": {
 		"title": "This page does not exist",
 		"description": "The link may be out of date, or the address may have a typo. Nothing was broken on your side.",

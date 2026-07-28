@@ -1,5 +1,6 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { Injector, inject } from '@angular/core';
+import { NotifyService } from '@core/services/notify.service';
 import { AuthStore } from '@core/stores/auth.store';
 import { environment } from '@environments/environment';
 import { catchError, throwError } from 'rxjs';
@@ -28,6 +29,20 @@ const isAuthEndpoint = (url: string) =>
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 	const authStore = inject(AuthStore);
 
+	/*
+	 * `NotifyService` se resuelve solo cuando hace falta, y no al crear cada
+	 * petición.
+	 *
+	 * Depende de `TranslateService`, y el loader de i18n descarga sus ficheros a
+	 * través de este mismo interceptor. Construirlo aquí encadena
+	 * interceptor → NotifyService → TranslateService → petición → interceptor:
+	 * Angular aborta con NG0200 y la aplicación se queda sin traducciones,
+	 * mostrando las claves crudas. Es el mismo ciclo que tenía `AuthStore` al
+	 * hacer HTTP en `withHooks({ onInit })`; un interceptor es un sitio delicado
+	 * para inyectar cosas.
+	 */
+	const injector = inject(Injector);
+
 	// Clone request con credentials (necesario para cookies HttpOnly)
 	let newReq = req.clone({
 		withCredentials: true,
@@ -50,6 +65,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 			// Un 401 fuera de los endpoints de autenticación sí significa que la
 			// sesión expiró.
 			if (error.status === 401 && !isAuthEndpoint(req.url)) {
+				// Se avisa antes de cerrar sesión: `logout()` navega al login, y sin
+				// esto el usuario acaba ahí sin ninguna explicación de por qué se le
+				// echó a mitad de lo que estaba haciendo.
+				injector.get(NotifyService).warning('notify.session.expired');
 				authStore.logout();
 			}
 

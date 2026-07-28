@@ -24,6 +24,15 @@
 	"a11y": {
 		"skipToContent": "Saltar al contenido"
 	},
+	"notify": {
+		"session": {
+			"expired": "Tu sesión caducó. Vuelve a iniciar sesión.",
+			"closed": "Cerraste la sesión."
+		},
+		"clipboard": {
+			"failed": "No se pudo copiar. Selecciona el comando y cópialo a mano."
+		}
+	},
 	"notFound": {
 		"title": "Esta página no existe",
 		"description": "Puede que el enlace esté desactualizado o que la dirección tenga una errata. No has roto nada.",
