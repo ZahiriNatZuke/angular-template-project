@@ -68,15 +68,39 @@ absorb by copying files across.
   never mentioned Playwright, `pnpm e2e`, the end-to-end CI job or coverage thresholds.
   The landing page itself showed "42 tests" to visitors.
 
-### Known issues
+### Fixed (session handling)
 
-The end-to-end suite surfaced two defects in session handling, marked `test.fixme` until
-they are fixed:
-
-- A rejected login shows no error. The interceptor treats **every** 401 as an expired
-  session and calls `logout()`, which resets state and wipes the message `login` just set.
-- Loading a protected route directly bounces an authenticated user to the login page:
-  `authGuard` is evaluated before `checkAuth()` has resolved.
+- **Startup session validation never ran.** `AuthStore` fired `fetchCsrfToken()` and
+  `checkAuth()` from `withHooks({ onInit })`. Those requests pass through
+  `authInterceptor`, which injects `AuthStore` — the very store still under construction.
+  Angular threw `NG0200: Circular dependency detected for SignalStore` and the requests
+  never left the browser. The feature the README advertised as "automatic session
+  validation on application startup" had therefore never worked. Both calls moved to
+  `provideAppInitializer`, where the store is fully built.
+- **A rejected login showed no error.** The interceptor treated *every* 401 as an expired
+  session and called `logout()`, which reset state and wiped the message `login` had just
+  set. It now skips the auth endpoints, where a 401 is a business answer rather than an
+  expired session.
+- **Loading a protected route directly bounced an authenticated user to the login page.**
+  `authGuard` was evaluated before `checkAuth()` resolved. Both guards now wait on a new
+  `isSessionChecked` flag before deciding.
+- **Every login went out without its `X-CSRF-Token` header.** Startup asks for
+  `/auth/csrf` and `/auth/me` at the same time, and `checkAuth()` reset its error branch
+  with `...initialState` — which includes `csrfToken: null`. So the ordinary 401 of an
+  anonymous visitor threw away the token that had just arrived, and the next mutation, the
+  login itself, travelled bare. A backend validating CSRF would have rejected the first
+  mutation of every session. The reset now goes to an `anonymousSession` shape that leaves
+  the token alone: the token belongs to the browser, not to the session. This was the
+  defect tracked as a known issue in the previous entry; the end-to-end test that found it
+  is no longer skipped.
+- **After logging out, the next login had a stale token.** `logout()` cleared
+  `csrfToken` and nothing asked for a new one, since `fetchCsrfToken()` only ran from
+  `provideAppInitializer` — so without a page reload the following mutation had no valid
+  token. Closing a session now requests a fresh one, which is also what a backend that
+  rotates the token on logout expects.
+- **The 401 exemption matched by substring.** `url.includes('/auth/me')` would also have
+  exempted a business endpoint such as `/api/users/auth/me`, silently keeping expired
+  sessions alive. It now compares the full URL.
 
 ### Fixed
 

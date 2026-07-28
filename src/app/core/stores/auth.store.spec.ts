@@ -37,11 +37,18 @@ describe('AuthStore', () => {
 	});
 
 	/**
-	 * El store dispara `fetchCsrfToken` y `checkAuth` en `onInit`, así que hay que
-	 * resolver ambas peticiones antes de poder ejercitar cualquier otra cosa.
+	 * Reproduce lo que hace `provideAppInitializer`: construir el store y lanzar
+	 * el arranque de sesión.
+	 *
+	 * No se hace en `withHooks({ onInit })` porque hacer HTTP durante la
+	 * construcción del store choca con `authInterceptor`, que inyecta ese mismo
+	 * store, y Angular aborta con NG0200.
 	 */
 	const initStore = (session: User | null = null) => {
 		const store = TestBed.inject(AuthStore);
+
+		store.fetchCsrfToken();
+		store.checkAuth();
 
 		httpMock
 			.expectOne(`${environment.apiUrl}/auth/csrf`)
@@ -171,6 +178,9 @@ describe('AuthStore', () => {
 
 		store.logout();
 		httpMock.expectOne(`${environment.apiUrl}/auth/logout`).flush({});
+		httpMock
+			.expectOne(`${environment.apiUrl}/auth/csrf`)
+			.flush({ csrfToken: 'csrf-nuevo' });
 
 		expect(store.isAuthenticated()).toBe(false);
 		expect(store.user()).toBeNull();
@@ -184,14 +194,45 @@ describe('AuthStore', () => {
 		httpMock
 			.expectOne(`${environment.apiUrl}/auth/logout`)
 			.flush('Boom', { status: 500, statusText: 'Server Error' });
+		httpMock
+			.expectOne(`${environment.apiUrl}/auth/csrf`)
+			.flush({ csrfToken: 'csrf-nuevo' });
 
 		expect(store.isAuthenticated()).toBe(false);
 		expect(store.user()).toBeNull();
 		expect(navigate).toHaveBeenCalledWith(['/auth/login']);
 	});
 
+	it('el 401 del arranque no borra el token CSRF recién obtenido', () => {
+		// Regresión: `checkAuth` reseteaba con `...initialState`, que incluye
+		// `csrfToken: null`. Como el arranque pide `/auth/csrf` y `/auth/me` a la
+		// vez, el 401 normal de un anónimo tiraba el token y el login —la primera
+		// mutación de la sesión— salía sin la cabecera `X-CSRF-Token`.
+		const store = initStore();
+
+		expect(store.isAuthenticated()).toBe(false);
+		expect(store.csrfToken()).toBe('csrf-123');
+	});
+
+	it('logout pide un token CSRF nuevo', () => {
+		// El backend rota el token al cerrar sesión, así que el anterior ya no
+		// sirve: sin pedir uno nuevo, el siguiente login viajaría con un token
+		// muerto y un backend que valide CSRF lo rechazaría.
+		const store = initStore(USER);
+
+		store.logout();
+		httpMock.expectOne(`${environment.apiUrl}/auth/logout`).flush({});
+		httpMock
+			.expectOne(`${environment.apiUrl}/auth/csrf`)
+			.flush({ csrfToken: 'csrf-rotado' });
+
+		expect(store.csrfToken()).toBe('csrf-rotado');
+	});
+
 	it('guarda el error si no se puede obtener el token CSRF', () => {
 		const store = TestBed.inject(AuthStore);
+		store.fetchCsrfToken();
+		store.checkAuth();
 
 		httpMock
 			.expectOne(`${environment.apiUrl}/auth/csrf`)
@@ -203,10 +244,13 @@ describe('AuthStore', () => {
 	});
 
 	it('una sesión inválida descarta el error previo del CSRF', () => {
-		// `checkAuth` restaura `initialState` al fallar, así que borra cualquier
-		// mensaje que hubiera dejado `fetchCsrfToken`. Se fija la conducta actual
-		// para que un cambio futuro en ese handler sea deliberado.
+		// Al fallar, `checkAuth` vuelve al estado anónimo, que incluye
+		// `error: null`, así que borra cualquier mensaje que hubiera dejado
+		// `fetchCsrfToken`. Se fija la conducta actual para que un cambio futuro en
+		// ese handler sea deliberado.
 		const store = TestBed.inject(AuthStore);
+		store.fetchCsrfToken();
+		store.checkAuth();
 
 		httpMock
 			.expectOne(`${environment.apiUrl}/auth/csrf`)
