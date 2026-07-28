@@ -27,6 +27,46 @@ absorb by copying files across.
 - **End-to-end tests** with Playwright, on desktop and mobile viewports, plus a CI job.
   The auth flows run against intercepted API responses, so the session paths are
   exercisable without standing up a backend.
+- **Focus management across navigations, and a skip link.** A single-page app does not
+  move focus when the route changes: it stays on the link that was clicked, so a screen
+  reader never announces the new page and keyboard users keep tabbing from the navbar.
+  `initRouteFocusManagement` now moves focus to the main landmark after each navigation,
+  skipping the initial load so it does not override an in-page `#fragment`. The shell
+  gained `header`/`main`/`footer` landmarks.
+- **Deferred views on the landing page.** The two largest sections moved into their own
+  components so `@defer (on viewport; prefetch on idle)` can give them separate chunks,
+  with a height-reserving `@placeholder`. Note the trade-off, measured rather than
+  assumed: 5 kB move out of the initial bundle but the deferred-view runtime adds ~12 kB
+  to it. At this size that is a net loss in bytes; the pattern is kept because it is what
+  to copy when the deferred content is genuinely heavy.
+- **`NotifyService` is finally used.** It was written, tested, and called by nobody.
+  It now covers the two places where the user was left without information: an expired
+  session — a 401 signs you out and navigates to the login page, previously with no
+  explanation at all — and signing out on purpose. A `failure()` method was added, which
+  was the case the service was missing.
+- **CodeQL workflow.** The `main` ruleset already required code scanning with CodeQL to
+  merge a pull request, but no workflow produced any analysis, so the requirement could
+  never be met and every pull request stayed blocked with CI green.
+- **`.gitattributes`**, normalising line endings to LF. Without it, on Windows with
+  `core.autocrlf=true` every file in the project reads as mis-formatted to Biome:
+  `pnpm lint:ci` failed locally while CI passed, and the pre-commit hook rewrote the
+  entire repository on each commit.
+- **README: an explicit statement that this template is client-side rendered**, why, and
+  what SSR would cost — the template invests in per-route SEO, which invited the opposite
+  assumption. Plus a table for removing each piece you don't need.
+
+### Fixed
+
+- **The interceptor left the whole app untranslated.** Injecting `NotifyService` eagerly
+  there chained `interceptor → NotifyService → TranslateService → request → interceptor`,
+  because the i18n loader fetches its files through that same interceptor. Angular
+  aborted with `NG0200` and every page rendered raw translation keys. The service is now
+  resolved from the `Injector` only when there is something to announce. Same cycle
+  `AuthStore` had when it did HTTP in `withHooks({ onInit })` — an interceptor is a
+  delicate place to inject into.
+- **Documentation that had stopped being true.** The README advertised "42 tests" and
+  never mentioned Playwright, `pnpm e2e`, the end-to-end CI job or coverage thresholds.
+  The landing page itself showed "42 tests" to visitors.
 
 ### Fixed (session handling)
 

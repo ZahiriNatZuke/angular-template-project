@@ -1,6 +1,9 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for any coding agent working in this repository — Claude Code, Codex, Copilot
+or whatever comes next. This is the one versioned instruction file: if you keep a local
+`AGENTS.md` for another tool, mirror it from here instead of writing it by hand. An
+unversioned copy of this file went stale and still described the project as Angular 21.
 
 ## Project Overview
 
@@ -16,9 +19,12 @@ This is a **production-ready template** designed for building scalable Angular a
 - `pnpm watch` - Development build with watch mode
 
 ### Testing
-- `pnpm test` - Run Vitest tests
+- `pnpm test` - Run Vitest unit tests
 - `pnpm test:ui` - Run Vitest with UI
-- `pnpm test:coverage` - Generate test coverage report
+- `pnpm test:coverage` - Run with coverage thresholds enforced (this is what CI runs)
+- `pnpm e2e` - Run the Playwright end-to-end suite
+- `pnpm e2e:ui` - Playwright in interactive mode
+- `pnpm e2e:report` - Open the report of the last run
 
 ### Code Quality
 - `pnpm lint` - Run Biome linter with auto-fix (includes unsafe fixes)
@@ -306,10 +312,31 @@ Biome is used for linting and formatting:
 
 ### Testing
 
-- **Vitest** with `@analogjs/vitest-angular`
-- Test setup: `src/setup-vitest.ts`
-- Run tests with `pnpm test`
-- UI mode available with `pnpm test:ui`
+Two suites, deliberately separated by directory so neither runner picks up the
+other's specs:
+
+- **Unit — Vitest** with `@analogjs/vitest-angular`. Specs live next to the code as
+  `*.spec.ts` under `src/`. Setup in `src/setup-vitest.ts`. Coverage thresholds are
+  enforced in CI, so coverage cannot silently regress.
+- **End-to-end — Playwright**, in `e2e/` as `*.e2e.spec.ts`, on a desktop and a mobile
+  viewport. `@playwright/test` is pinned rather than floating, because the browser
+  binaries have to match the package version.
+
+The auth flows are exercised against responses intercepted with `page.route`, so the
+session paths are testable without standing up a backend. That is a stopgap, not a
+substitute: `apiUrl` points at a backend that does not exist in this repo.
+
+Write end-to-end tests for what only a real browser shows. Two of the worst defects
+this template ever had — the store never validating the session at startup, and the
+CSRF token being wiped between two startup requests — were invisible to unit tests
+and to reading the code.
+
+### Line Endings
+
+`.gitattributes` normalises everything to LF. Do not remove it: Biome formats to LF,
+so on Windows with `core.autocrlf=true` every file in the project reads as
+mis-formatted, `pnpm lint:ci` fails locally while CI passes, and the pre-commit hook
+rewrites the whole repository on each commit.
 
 ### Git Hooks
 
