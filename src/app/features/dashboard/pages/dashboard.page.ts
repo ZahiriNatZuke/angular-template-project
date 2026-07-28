@@ -21,6 +21,8 @@ export class DashboardPage {
 		// pantalla de login sin más contexto no distingue entre «me fui yo» y «me
 		// echaron». El toast sobrevive a la navegación porque Notiflix lo monta
 		// fuera del árbol de la aplicación.
-		this.#notify.info('notify.session.closed');
+		//
+		// `void`: Notiflix se carga bajo demanda, y el cierre de sesión no espera.
+		void this.#notify.info('notify.session.closed');
 	}
 }

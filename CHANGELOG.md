@@ -9,6 +9,12 @@ absorb by copying files across.
 
 ## [Unreleased]
 
+## [2.1.0]
+
+Everything the 2.0.0 release advertised, now actually working — plus the repository
+housekeeping that 2.0.0 skipped. The headline is that the end-to-end suite paid for itself
+twice: it found two defects that unit tests and code reading could not see.
+
 ### Added
 
 - `LICENSE` file. The MIT licence was declared in `package.json`, the README and the app
@@ -54,6 +60,15 @@ absorb by copying files across.
 - **README: an explicit statement that this template is client-side rendered**, why, and
   what SSR would cost — the template invests in per-route SEO, which invited the opposite
   assumption. Plus a table for removing each piece you don't need.
+
+### Changed
+
+- **Notiflix is loaded on demand.** Wiring up `NotifyService` put it in the initial
+  bundle — around 100 kB raw, 14 kB transferred, for something most visits never see. It
+  now arrives through `import()` in its own chunk, so the initial bundle goes from 481.43
+  to **391.01 kB raw** (111.41 → **97.50 kB transferred**). The cost is a wait the first
+  time a notification is shown; the service's methods return their promise for anyone who
+  needs to await it.
 
 ### Fixed
 
@@ -180,5 +195,6 @@ the point — the first version where the test suite, the router and the theme a
 Initial template: standalone components, zoneless change detection, NgRx SignalStore,
 HttpOnly cookie authentication, TailwindCSS v4 with DaisyUI, and i18n.
 
-[unreleased]: https://github.com/ZahiriNatZuke/angular-template-project/compare/main...HEAD
+[unreleased]: https://github.com/ZahiriNatZuke/angular-template-project/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/ZahiriNatZuke/angular-template-project/releases/tag/v2.1.0
 [2.0.0]: https://github.com/ZahiriNatZuke/angular-template-project/releases/tag/v2.0.0

@@ -142,6 +142,26 @@ test.describe('Autenticación', () => {
 		await expect(page).toHaveURL(/\/auth\/login/);
 	});
 
+	/*
+	 * Aquí había un test que comprobaba que el aviso de cierre de sesión aparece
+	 * en pantalla. No se puede sostener contra el servidor de desarrollo:
+	 * `NotifyService` carga Notiflix con `import()`, y la primera vez que se pide
+	 * una dependencia que no estaba pre-empaquetada, el servidor la optimiza y
+	 * **recarga la página**. La recarga se lleva por delante el aviso.
+	 *
+	 * Es un artefacto del desarrollo, no del producto: en el build el chunk ya
+	 * existe y no hay recarga ninguna. Pasaba en local —donde Notiflix ya estaba
+	 * optimizado de antes— y fallaba en CI, que arranca con la caché limpia.
+	 *
+	 * Lo que sí queda cubierto: que el servicio muestra el aviso tras cargar el
+	 * módulo, que no lo descarga dos veces y que no hay nada sincrónico
+	 * (`notify.service.spec.ts`), y que Notiflix sale como chunk aparte, que se
+	 * comprueba en el build.
+	 *
+	 * Vale la pena saberlo también como usuario del template: la primera vez que
+	 * se dispara un aviso con `pnpm start`, la página se recarga.
+	 */
+
 	// Este test estuvo en `fixme` mientras el fallo que destapó seguía sin
 	// aislar, y fue el que lo encontró: el store perdía el token porque
 	// `checkAuth` reseteaba con `...initialState` y el 401 normal de un anónimo
