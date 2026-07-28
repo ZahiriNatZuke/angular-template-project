@@ -27,16 +27,80 @@ absorb by copying files across.
 - **End-to-end tests** with Playwright, on desktop and mobile viewports, plus a CI job.
   The auth flows run against intercepted API responses, so the session paths are
   exercisable without standing up a backend.
+- **Focus management across navigations, and a skip link.** A single-page app does not
+  move focus when the route changes: it stays on the link that was clicked, so a screen
+  reader never announces the new page and keyboard users keep tabbing from the navbar.
+  `initRouteFocusManagement` now moves focus to the main landmark after each navigation,
+  skipping the initial load so it does not override an in-page `#fragment`. The shell
+  gained `header`/`main`/`footer` landmarks.
+- **Deferred views on the landing page.** The two largest sections moved into their own
+  components so `@defer (on viewport; prefetch on idle)` can give them separate chunks,
+  with a height-reserving `@placeholder`. Note the trade-off, measured rather than
+  assumed: 5 kB move out of the initial bundle but the deferred-view runtime adds ~12 kB
+  to it. At this size that is a net loss in bytes; the pattern is kept because it is what
+  to copy when the deferred content is genuinely heavy.
+- **`NotifyService` is finally used.** It was written, tested, and called by nobody.
+  It now covers the two places where the user was left without information: an expired
+  session — a 401 signs you out and navigates to the login page, previously with no
+  explanation at all — and signing out on purpose. A `failure()` method was added, which
+  was the case the service was missing.
+- **CodeQL workflow.** The `main` ruleset already required code scanning with CodeQL to
+  merge a pull request, but no workflow produced any analysis, so the requirement could
+  never be met and every pull request stayed blocked with CI green.
+- **`.gitattributes`**, normalising line endings to LF. Without it, on Windows with
+  `core.autocrlf=true` every file in the project reads as mis-formatted to Biome:
+  `pnpm lint:ci` failed locally while CI passed, and the pre-commit hook rewrote the
+  entire repository on each commit.
+- **README: an explicit statement that this template is client-side rendered**, why, and
+  what SSR would cost — the template invests in per-route SEO, which invited the opposite
+  assumption. Plus a table for removing each piece you don't need.
 
-### Known issues
+### Fixed
 
-The end-to-end suite surfaced two defects in session handling, marked `test.fixme` until
-they are fixed:
+- **The interceptor left the whole app untranslated.** Injecting `NotifyService` eagerly
+  there chained `interceptor → NotifyService → TranslateService → request → interceptor`,
+  because the i18n loader fetches its files through that same interceptor. Angular
+  aborted with `NG0200` and every page rendered raw translation keys. The service is now
+  resolved from the `Injector` only when there is something to announce. Same cycle
+  `AuthStore` had when it did HTTP in `withHooks({ onInit })` — an interceptor is a
+  delicate place to inject into.
+- **Documentation that had stopped being true.** The README advertised "42 tests" and
+  never mentioned Playwright, `pnpm e2e`, the end-to-end CI job or coverage thresholds.
+  The landing page itself showed "42 tests" to visitors.
 
-- A rejected login shows no error. The interceptor treats **every** 401 as an expired
-  session and calls `logout()`, which resets state and wipes the message `login` just set.
-- Loading a protected route directly bounces an authenticated user to the login page:
-  `authGuard` is evaluated before `checkAuth()` has resolved.
+### Fixed (session handling)
+
+- **Startup session validation never ran.** `AuthStore` fired `fetchCsrfToken()` and
+  `checkAuth()` from `withHooks({ onInit })`. Those requests pass through
+  `authInterceptor`, which injects `AuthStore` — the very store still under construction.
+  Angular threw `NG0200: Circular dependency detected for SignalStore` and the requests
+  never left the browser. The feature the README advertised as "automatic session
+  validation on application startup" had therefore never worked. Both calls moved to
+  `provideAppInitializer`, where the store is fully built.
+- **A rejected login showed no error.** The interceptor treated *every* 401 as an expired
+  session and called `logout()`, which reset state and wiped the message `login` had just
+  set. It now skips the auth endpoints, where a 401 is a business answer rather than an
+  expired session.
+- **Loading a protected route directly bounced an authenticated user to the login page.**
+  `authGuard` was evaluated before `checkAuth()` resolved. Both guards now wait on a new
+  `isSessionChecked` flag before deciding.
+- **Every login went out without its `X-CSRF-Token` header.** Startup asks for
+  `/auth/csrf` and `/auth/me` at the same time, and `checkAuth()` reset its error branch
+  with `...initialState` — which includes `csrfToken: null`. So the ordinary 401 of an
+  anonymous visitor threw away the token that had just arrived, and the next mutation, the
+  login itself, travelled bare. A backend validating CSRF would have rejected the first
+  mutation of every session. The reset now goes to an `anonymousSession` shape that leaves
+  the token alone: the token belongs to the browser, not to the session. This was the
+  defect tracked as a known issue in the previous entry; the end-to-end test that found it
+  is no longer skipped.
+- **After logging out, the next login had a stale token.** `logout()` cleared
+  `csrfToken` and nothing asked for a new one, since `fetchCsrfToken()` only ran from
+  `provideAppInitializer` — so without a page reload the following mutation had no valid
+  token. Closing a session now requests a fresh one, which is also what a backend that
+  rotates the token on logout expects.
+- **The 401 exemption matched by substring.** `url.includes('/auth/me')` would also have
+  exempted a business endpoint such as `/api/users/auth/me`, silently keeping expired
+  sessions alive. It now compares the full URL.
 
 ### Fixed
 

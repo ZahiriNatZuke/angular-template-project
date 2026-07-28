@@ -21,6 +21,18 @@
 		"login": "Iniciar sesión",
 		"dashboard": "Panel"
 	},
+	"a11y": {
+		"skipToContent": "Saltar al contenido"
+	},
+	"notify": {
+		"session": {
+			"expired": "Tu sesión caducó. Vuelve a iniciar sesión.",
+			"closed": "Cerraste la sesión."
+		},
+		"clipboard": {
+			"failed": "No se pudo copiar. Selecciona el comando y cópialo a mano."
+		}
+	},
 	"notFound": {
 		"title": "Esta página no existe",
 		"description": "Puede que el enlace esté desactualizado o que la dirección tenga una errata. No has roto nada.",
@@ -152,8 +164,8 @@
 				"description": "Inglés y español con cambio reactivo y SEO que espera a las traducciones."
 			},
 			"testing": {
-				"title": "Vitest y CI",
-				"description": "42 tests sobre stores, interceptor y guards, ejecutándose en Node 22 y 24."
+				"title": "Vitest, Playwright y CI",
+				"description": "Tests unitarios sobre stores, interceptor, guards y páginas, más flujos de punta a punta en un navegador real, ejecutándose en Node 22 y 24."
 			}
 		},
 		"stack": {

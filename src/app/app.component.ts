@@ -6,6 +6,7 @@ import { LanguageStore } from '@core/stores/language.store';
 import { ThemeStore } from '@core/stores/theme.store';
 import { Languages } from '@core/types/enums/languages';
 import { APP_LINKS } from '@core/utils/app-links';
+import { MAIN_CONTENT_ID } from '@core/utils/route-focus.init';
 import { TranslatePipe } from '@ngx-translate/core';
 import { version } from '../../package.json';
 
@@ -23,6 +24,9 @@ export class AppComponent {
 	version = signal(version);
 	repoUrl = signal(APP_LINKS.repo);
 	authorUrl = signal(APP_LINKS.author);
+
+	/** Compartido con `initRouteFocusManagement`, que enfoca este landmark. */
+	mainContentId = MAIN_CONTENT_ID;
 
 	Languages = Languages;
 
